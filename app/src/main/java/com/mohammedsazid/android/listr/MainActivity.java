@@ -22,12 +22,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new ChecklistItemsFragment())
+                .commit();
+
 //        createEntry("Simple checklist item", "1");
 //        deleteItem(11);
 //        updateItem(3);
 //        showResults();
     }
 
+    /*
     private void updateItem(long id) {
         Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
         Uri uri = ContentUris.withAppendedId(builder.build(), id);
@@ -110,6 +115,8 @@ public class MainActivity extends AppCompatActivity {
 
         textView.setText(buildUpString);
     }
+
+    */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
