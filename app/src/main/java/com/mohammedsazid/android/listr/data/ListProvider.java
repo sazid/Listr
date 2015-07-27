@@ -65,7 +65,6 @@ public class ListProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
-        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         Cursor c;
 
         if (sortOrder == null || sortOrder == "") {
@@ -77,11 +76,11 @@ public class ListProvider extends ContentProvider {
             case CHECKLIST_ITEM:
 
                 String id = uri.getLastPathSegment();
-                c = queryBuilder.query(
-                        db,
+                c = db.query(
+                        ChecklistItems.TABLE_NAME,
                         projection,
                         ChecklistItems._ID + " = ?",
-                        new String[] {id},
+                        new String[]{id},
                         null,
                         null,
                         sortOrder
@@ -90,8 +89,8 @@ public class ListProvider extends ContentProvider {
                 break;
             case CHECKLIST_ITEMS:
 
-                c = queryBuilder.query(
-                        db,
+                c = db.query(
+                        ChecklistItems.TABLE_NAME,
                         projection,
                         null,
                         null,
