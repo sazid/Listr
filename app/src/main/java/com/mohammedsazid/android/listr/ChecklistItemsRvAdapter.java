@@ -23,38 +23,39 @@
 
 package com.mohammedsazid.android.listr;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class ChecklistItemsFragment extends Fragment {
+public class ChecklistItemsRvAdapter extends RecyclerView.Adapter<ChecklistItemsRvAdapter.ViewHolder> {
 
-    RecyclerView checklistItemsRv;
-
-    public ChecklistItemsFragment() {
-    }
-
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_checklist_items, container, false);
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
+        View view = LayoutInflater.from(
+                viewGroup.getContext()).inflate(R.layout.rv_checklist_item, viewGroup, false);
 
-        bindViews(view);
+        ViewHolder viewHolder = new ViewHolder(view);
 
-        ChecklistItemsRvAdapter checklistItemsRvAdapter = new ChecklistItemsRvAdapter();
-        checklistItemsRv.setAdapter(checklistItemsRvAdapter);
-        checklistItemsRv.setHasFixedSize(true);
-        checklistItemsRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        return view;
+        return viewHolder;
     }
 
-    private void bindViews(View rootView) {
-        checklistItemsRv = (RecyclerView) rootView.findViewById(R.id.checklist_items_rv);
+    @Override
+    public void onBindViewHolder(ViewHolder viewHolder, int position) {
+
     }
+
+    @Override
+    public int getItemCount() {
+        return 0;
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+        }
+
+    }
+
 }
