@@ -25,6 +25,7 @@ package com.mohammedsazid.android.listr;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +51,11 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
         String checkedState = cursor.getString(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE));
 
         boolean checked = checkedState.equals("0") ? false : true;
+
+        holder.checklistItemLabelTv.setPaintFlags(holder.checklistItemLabelTv.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+        if (checked) {
+            holder.checklistItemLabelTv.setPaintFlags(holder.checklistItemLabelTv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        }
 
         holder.checklistItemLabelTv.setText(label);
         holder.checklistItemCheckBox.setChecked(checked);
