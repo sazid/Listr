@@ -23,6 +23,8 @@
 
 package com.mohammedsazid.android.listr;
 
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -31,6 +33,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.mohammedsazid.android.listr.data.ListDbContract;
+import com.mohammedsazid.android.listr.data.ListProvider;
 
 public class ChecklistItemsFragment extends Fragment {
 
@@ -46,7 +51,22 @@ public class ChecklistItemsFragment extends Fragment {
 
         bindViews(view);
 
-        ChecklistItemsRvAdapter checklistItemsRvAdapter = new ChecklistItemsRvAdapter();
+        Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
+        Uri uri = builder.build();
+
+        Cursor cursor = getActivity().getContentResolver().query(
+                uri,
+                new String[] {
+                        ListDbContract.ChecklistItems._ID,
+                        ListDbContract.ChecklistItems.COLUMN_LABEL,
+                        ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE
+                },
+                null,
+                null,
+                null
+        );
+
+        ChecklistItemsRvAdapter checklistItemsRvAdapter = new ChecklistItemsRvAdapter(getActivity(), cursor);
         checklistItemsRv.setAdapter(checklistItemsRvAdapter);
         checklistItemsRv.setHasFixedSize(true);
         checklistItemsRv.setLayoutManager(new LinearLayoutManager(getActivity()));

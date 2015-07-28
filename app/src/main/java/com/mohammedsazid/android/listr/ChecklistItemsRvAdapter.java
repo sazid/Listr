@@ -23,12 +23,37 @@
 
 package com.mohammedsazid.android.listr;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.TextView;
 
-public class ChecklistItemsRvAdapter extends RecyclerView.Adapter<ChecklistItemsRvAdapter.ViewHolder> {
+import com.mohammedsazid.android.listr.data.ListDbContract;
+
+public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItemsRvAdapter.ViewHolder> {
+
+    private Context mContext;
+
+    public ChecklistItemsRvAdapter(Context context, Cursor cursor) {
+        super(cursor);
+        mContext = context;
+    }
+
+    @Override
+    public void onBindViewHolderCursor(ViewHolder holder, Cursor cursor) {
+//        int pos = cursor.getPosition();
+        String label = cursor.getString(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_LABEL));
+        String checkedState = cursor.getString(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE));
+
+        boolean checked = checkedState.equals("0") ? false : true;
+
+        holder.checklistItemLabelTv.setText(label);
+        holder.checklistItemCheckBox.setChecked(checked);
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
@@ -40,20 +65,16 @@ public class ChecklistItemsRvAdapter extends RecyclerView.Adapter<ChecklistItems
         return viewHolder;
     }
 
-    @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int position) {
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return 0;
-    }
-
     static class ViewHolder extends RecyclerView.ViewHolder {
+
+        TextView checklistItemLabelTv;
+        CheckBox checklistItemCheckBox;
 
         public ViewHolder(View itemView) {
             super(itemView);
+
+            checklistItemCheckBox = (CheckBox) itemView.findViewById(R.id.checklist_item_checkBox);
+            checklistItemLabelTv = (TextView) itemView.findViewById(R.id.checklist_item_label);
         }
 
     }
