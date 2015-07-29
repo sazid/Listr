@@ -1,21 +1,15 @@
 package com.mohammedsazid.android.listr;
 
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.mohammedsazid.android.listr.data.ListDbContract;
-import com.mohammedsazid.android.listr.data.ListProvider;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    Toolbar topToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,10 +20,18 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container, new ChecklistItemsFragment())
                 .commit();
 
+        bindViews();
+
+        setSupportActionBar(topToolbar);
+
 //        createEntry("Simple checklist item", "1");
 //        deleteItem(11);
 //        updateItem(3);
 //        showResults();
+    }
+
+    private void bindViews() {
+        topToolbar = (Toolbar) findViewById(R.id.top_toolbar);
     }
 
     /*
