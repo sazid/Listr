@@ -23,17 +23,23 @@
 
 package com.mohammedsazid.android.listr;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.mohammedsazid.android.listr.data.ListDbContract;
+import com.mohammedsazid.android.listr.data.ListProvider;
 
 public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItemsRvAdapter.ViewHolder> {
 
@@ -45,20 +51,55 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
     }
 
     @Override
-    public void onBindViewHolderCursor(ViewHolder holder, Cursor cursor) {
-//        int pos = cursor.getPosition();
-        String label = cursor.getString(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_LABEL));
+    public void onBindViewHolderCursor(final ViewHolder holder, final Cursor cursor) {
+        int pos = cursor.getPosition();
+        final String label = cursor.getString(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_LABEL));
         String checkedState = cursor.getString(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE));
 
-        boolean checked = checkedState.equals("0") ? false : true;
+        final boolean checked = checkedState.equals("0") ? false : true;
 
-        holder.checklistItemLabelTv.setPaintFlags(holder.checklistItemLabelTv.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
         if (checked) {
             holder.checklistItemLabelTv.setPaintFlags(holder.checklistItemLabelTv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.checklistItemLabelTv.setTextColor(Color.GRAY);
+        } else {
+            holder.checklistItemLabelTv.setPaintFlags(holder.checklistItemLabelTv.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+            holder.checklistItemLabelTv.setTextColor(Color.BLACK);
         }
 
         holder.checklistItemLabelTv.setText(label);
+
+        holder.checklistItemCheckBox.setOnCheckedChangeListener(null);
         holder.checklistItemCheckBox.setChecked(checked);
+        holder.checklistItemCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                int position = holder.getPosition();
+                cursor.moveToPosition(position);
+                int _id = cursor.getInt(cursor.getColumnIndex("_id"));
+
+                if (isChecked) {
+                    holder.checklistItemLabelTv.setPaintFlags(holder.checklistItemLabelTv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    holder.checklistItemLabelTv.setTextColor(Color.GRAY);
+                } else {
+                    holder.checklistItemLabelTv.setPaintFlags(holder.checklistItemLabelTv.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                    holder.checklistItemLabelTv.setTextColor(Color.BLACK);
+                }
+
+                ContentValues values = new ContentValues();
+                values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, isChecked);
+                Uri uri = ContentUris.withAppendedId(ListProvider.CONTENT_URI.buildUpon().appendPath("items").build(), _id);
+
+                int count = mContext.getContentResolver().update(uri, values, null, null);
+
+//                Log.v("Count",
+//                        ".\nID: " + _id
+//                                + "\nLabel: " + label
+//                                + "\nUpdate count: " + String.valueOf(count)
+//                                + "\nIs checked: " + String.valueOf(isChecked)
+//                                + "\nPosition: " + holder.getPosition()
+//                );
+            }
+        });
     }
 
     @Override
