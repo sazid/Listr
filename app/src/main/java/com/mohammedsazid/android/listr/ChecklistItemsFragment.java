@@ -56,7 +56,7 @@ public class ChecklistItemsFragment extends Fragment {
 
         Cursor cursor = getActivity().getContentResolver().query(
                 uri,
-                new String[] {
+                new String[]{
                         ListDbContract.ChecklistItems._ID,
                         ListDbContract.ChecklistItems.COLUMN_LABEL,
                         ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE
@@ -67,6 +67,8 @@ public class ChecklistItemsFragment extends Fragment {
         );
 
         ChecklistItemsRvAdapter checklistItemsRvAdapter = new ChecklistItemsRvAdapter(getActivity(), cursor);
+        checklistItemsRvAdapter.setHasStableIds(true);
+
         checklistItemsRv.setAdapter(checklistItemsRvAdapter);
         checklistItemsRv.setHasFixedSize(true);
         checklistItemsRv.setLayoutManager(new LinearLayoutManager(getActivity()));
