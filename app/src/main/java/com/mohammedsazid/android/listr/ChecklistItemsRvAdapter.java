@@ -60,7 +60,7 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
 
         if (checked) {
             holder.checklistItemLabelTv.setPaintFlags(holder.checklistItemLabelTv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            holder.checklistItemLabelTv.setTextColor(Color.GRAY);
+            holder.checklistItemLabelTv.setTextColor(Color.DKGRAY);
         } else {
             holder.checklistItemLabelTv.setPaintFlags(holder.checklistItemLabelTv.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
             holder.checklistItemLabelTv.setTextColor(Color.BLACK);
@@ -79,7 +79,7 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
 
                 if (isChecked) {
                     holder.checklistItemLabelTv.setPaintFlags(holder.checklistItemLabelTv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                    holder.checklistItemLabelTv.setTextColor(Color.GRAY);
+                    holder.checklistItemLabelTv.setTextColor(Color.DKGRAY);
                 } else {
                     holder.checklistItemLabelTv.setPaintFlags(holder.checklistItemLabelTv.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                     holder.checklistItemLabelTv.setTextColor(Color.BLACK);
