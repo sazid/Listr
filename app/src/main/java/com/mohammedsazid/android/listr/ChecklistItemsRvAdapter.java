@@ -23,14 +23,14 @@
 
 package com.mohammedsazid.android.listr;
 
-import android.app.Activity;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,9 +44,9 @@ import com.mohammedsazid.android.listr.data.ListProvider;
 
 public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItemsRvAdapter.ViewHolder> {
 
-    private Activity mActivity;
+    private FragmentActivity mActivity;
 
-    public ChecklistItemsRvAdapter(Activity activity, Cursor cursor) {
+    public ChecklistItemsRvAdapter(FragmentActivity activity, Cursor cursor) {
         super(cursor);
         mActivity = activity;
     }
@@ -67,6 +67,25 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
         }
 
         holder.checklistItemLabelTv.setText(label);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = holder.getPosition();
+                cursor.moveToPosition(position);
+                int _id = cursor.getInt(cursor.getColumnIndex("_id"));
+
+                ChecklistItemEditor fragment = new ChecklistItemEditor();
+                Bundle bundle = new Bundle();
+                bundle.putInt("ID", _id);
+                fragment.setArguments(bundle);
+
+                mActivity.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .addToBackStack("editor")
+                        .commit();
+            }
+        });
 
         holder.checklistItemCheckBox.setOnCheckedChangeListener(null);
         holder.checklistItemCheckBox.setChecked(checked);

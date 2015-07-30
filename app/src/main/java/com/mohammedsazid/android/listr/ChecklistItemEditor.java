@@ -23,7 +23,9 @@
 
 package com.mohammedsazid.android.listr;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -41,6 +43,10 @@ import com.mohammedsazid.android.listr.data.ListProvider;
 public class ChecklistItemEditor extends Fragment {
 
     EditText checklistItemContentEt;
+    Bundle bundle;
+    String content;
+    int id;
+    boolean checkedState;
 
     public ChecklistItemEditor() {
     }
@@ -50,9 +56,40 @@ public class ChecklistItemEditor extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_checklist_item_editor, container, false);
 
+        bundle = getArguments();
+        id = bundle.getInt("ID", -1);
+
         bindViews(view);
+        loadContent();
 
         return view;
+    }
+
+    private void loadContent() {
+        if (id > -1) {
+            Uri uri = ContentUris.withAppendedId(
+                    ListProvider.CONTENT_URI.buildUpon().appendPath("items").build(), id);
+
+            Cursor cursor = getActivity().getContentResolver().query(
+                    uri,
+                    new String[]{
+                            ListDbContract.ChecklistItems._ID,
+                            ListDbContract.ChecklistItems.COLUMN_LABEL,
+                            ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE
+                    },
+                    null,
+                    null,
+                    null
+            );
+            cursor.moveToFirst();
+
+            content = cursor.getString(
+                    cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_LABEL));
+            checkedState = !cursor.getString(
+                    cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE)).equals("0");
+
+            checklistItemContentEt.setText(content);
+        }
     }
 
     private void bindViews(View rootView) {
@@ -61,21 +98,44 @@ public class ChecklistItemEditor extends Fragment {
 
     @Override
     public void onDestroy() {
-        String content = checklistItemContentEt.getText().toString();
-
-        if (!TextUtils.isEmpty(content)) {
-            Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
-            Uri uri = builder.build();
-
-            ContentValues values = new ContentValues();
-            values.put(ListDbContract.ChecklistItems.COLUMN_LABEL, content);
-            values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, "0");
-
-            Uri insertUri = getActivity().getContentResolver().insert(uri, values);
-
-            Log.v("LOG_URI", "onDestroy() inside CheckListItemEditor\n" + insertUri);
-        }
+        saveContentToDisk();
 
         super.onDestroy();
+    }
+
+    private void saveContentToDisk() {
+        if (id > -1) {
+            content = checklistItemContentEt.getText().toString();
+            updateItem(id);
+        } else {
+            String content = checklistItemContentEt.getText().toString();
+
+            if (!TextUtils.isEmpty(content)) {
+                Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
+                Uri uri = builder.build();
+
+                ContentValues values = new ContentValues();
+                values.put(ListDbContract.ChecklistItems.COLUMN_LABEL, content);
+                values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, "0");
+
+                Uri insertUri = getActivity().getContentResolver().insert(uri, values);
+            }
+        }
+    }
+
+    private void updateItem(long id) {
+        Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
+        Uri uri = ContentUris.withAppendedId(builder.build(), id);
+
+        ContentValues values = new ContentValues();
+        values.put(ListDbContract.ChecklistItems.COLUMN_LABEL, content);
+        values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, checkedState);
+
+        int count = getActivity().getContentResolver().update(
+                uri,
+                values,
+                null,
+                null
+        );
     }
 }
