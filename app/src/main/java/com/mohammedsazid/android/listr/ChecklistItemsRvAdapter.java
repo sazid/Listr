@@ -56,7 +56,7 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
         final String label = cursor.getString(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_LABEL));
         String checkedState = cursor.getString(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE));
 
-        final boolean checked = checkedState.equals("0") ? false : true;
+        final boolean checked = !checkedState.equals("0");
 
         if (checked) {
             holder.checklistItemLabelTv.setPaintFlags(holder.checklistItemLabelTv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -71,7 +71,7 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int position = holder.getPosition();
+                int position = holder.getAdapterPosition();
                 cursor.moveToPosition(position);
                 int _id = cursor.getInt(cursor.getColumnIndex("_id"));
 
@@ -92,7 +92,7 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
         holder.checklistItemCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                int position = holder.getPosition();
+                int position = holder.getAdapterPosition();
                 cursor.moveToPosition(position);
                 int _id = cursor.getInt(cursor.getColumnIndex("_id"));
 
