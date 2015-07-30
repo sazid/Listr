@@ -46,7 +46,9 @@
         android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/checklist_item_checkBox"
         android:layout_toRightOf="@+id/checklist_item_checkBox"
+        android:ellipsize="end"
         android:gravity="center_vertical"
+        android:maxLines="3"
         android:text="This is an item." />
 
 </RelativeLayout>

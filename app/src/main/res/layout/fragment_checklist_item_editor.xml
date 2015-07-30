@@ -30,11 +30,12 @@
         android:id="@+id/checklist_item_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="16dp"
         android:autoLink="all"
         android:ems="10"
         android:gravity="top|start"
         android:hint="Type something..."
-        android:inputType="textMultiLine|textAutoCorrect|textAutoComplete|textCapSentences" />
+        android:inputType="textMultiLine|textAutoCorrect|textCapSentences"
+        android:padding="16dp"
+        android:singleLine="false" />
 
 </LinearLayout>

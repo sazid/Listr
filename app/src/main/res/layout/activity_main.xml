@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/yellow_300"
+    android:background="@color/white"
     tools:context=".MainActivity">
 
     <android.support.v7.widget.Toolbar
@@ -12,7 +12,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:background="@color/yellow_primary_dark"
+        android:background="@color/red_primary_dark"
         android:minHeight="?android:actionBarSize" />
 
     <FrameLayout

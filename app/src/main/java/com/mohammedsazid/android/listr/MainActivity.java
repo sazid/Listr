@@ -52,18 +52,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
                 .replace(R.id.fragment_container, new ChecklistItemsFragment())
                 .commit();
 
         bindViews();
 
         setSupportActionBar(topToolbar);
+        topToolbar.setTitleTextColor(getResources().getColor(R.color.white));
     }
 
     public void bottomToolbarOnClick(View view) {
         getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
                 .replace(R.id.fragment_container, new ChecklistItemEditor())
                 .addToBackStack("editor")
                 .commit();
