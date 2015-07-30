@@ -21,30 +21,20 @@
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   -->
 
-<resources>
-    <color name="light_blue_300">#4FC3F7</color>
-    <color name="light_blue_primary">#03A9F4</color>
-    <color name="light_blue_primary_dark">#0288D1</color>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <color name="light_green_300">#AED581</color>
-    <color name="light_green_primary">#8BC34A</color>
-    <color name="light_green_primary_dark">#689F38</color>
+    <EditText
+        android:id="@+id/checklist_item_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"
+        android:autoLink="all"
+        android:ems="10"
+        android:gravity="top|start"
+        android:hint="Type something..."
+        android:inputType="textMultiLine|textAutoCorrect|textAutoComplete|textCapSentences" />
 
-    <color name="blue_grey_300">#90A4AE</color>
-    <color name="blue_grey_primary">#607D8B</color>
-    <color name="blue_grey_primary_dark">#455A64</color>
-
-    <color name="red_300">#E57373</color>
-    <color name="red_primary">#F44336</color>
-    <color name="red_primary_dark">#D32F2F</color>
-
-    <color name="orange_300">#FFB74D</color>
-    <color name="orange_primary">#FF9800</color>
-    <color name="orange_primary_dark">#F57C00</color>
-
-    <color name="yellow_300">#FFF176</color>
-    <color name="yellow_primary">#FFEB3B</color>
-    <color name="yellow_primary_dark">#FBC02D</color>
-
-    <color name="white">#FFFFFF</color>
-</resources>
+</LinearLayout>

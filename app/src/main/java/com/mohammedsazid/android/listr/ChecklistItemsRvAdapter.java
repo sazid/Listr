@@ -52,7 +52,6 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
 
     @Override
     public void onBindViewHolderCursor(final ViewHolder holder, final Cursor cursor) {
-        int pos = cursor.getPosition();
         final String label = cursor.getString(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_LABEL));
         String checkedState = cursor.getString(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE));
 

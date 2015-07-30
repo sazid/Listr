@@ -5,11 +5,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 
 public class MainActivity extends AppCompatActivity {
 
     Toolbar topToolbar;
+    Toolbar bottomToolbar;
+
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            super.onBackPressed();
+        } else {
+            getSupportFragmentManager().popBackStack();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +39,13 @@ public class MainActivity extends AppCompatActivity {
 //        deleteItem(11);
 //        updateItem(3);
 //        showResults();
+    }
+
+    public void bottomToolbarOnClick(View view) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new ChecklistItemEditor())
+                .addToBackStack("editor")
+                .commit();
     }
 
     private void bindViews() {
