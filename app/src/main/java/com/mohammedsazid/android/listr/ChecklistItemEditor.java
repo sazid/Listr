@@ -142,10 +142,10 @@ public class ChecklistItemEditor extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
+    public void onStop() {
         saveContentToDisk();
 
-        super.onDestroy();
+        super.onStop();
     }
 
     private void saveContentToDisk() {

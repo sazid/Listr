@@ -30,6 +30,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,10 @@ public class ChecklistItemsFragment extends Fragment {
 
         bindViews(view);
 
+        return view;
+    }
+
+    private void getChecklistItems() {
         Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
         Uri uri = builder.build();
 
@@ -72,11 +77,15 @@ public class ChecklistItemsFragment extends Fragment {
         checklistItemsRv.setAdapter(checklistItemsRvAdapter);
         checklistItemsRv.setHasFixedSize(true);
         checklistItemsRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        return view;
     }
 
     private void bindViews(View rootView) {
         checklistItemsRv = (RecyclerView) rootView.findViewById(R.id.checklist_items_rv);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getChecklistItems();
     }
 }
