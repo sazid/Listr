@@ -106,7 +106,10 @@ public class ChecklistItemEditor extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_editor, menu);
+        if (bundle != null && id > -1) {
+            inflater.inflate(R.menu.menu_editor, menu);
+        }
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
