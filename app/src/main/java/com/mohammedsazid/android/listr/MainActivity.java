@@ -4,6 +4,7 @@ import android.content.ContentUris;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -18,7 +19,8 @@ import com.mohammedsazid.android.listr.data.ListProvider;
 public class MainActivity extends AppCompatActivity {
 
     Toolbar topToolbar;
-    Toolbar bottomToolbar;
+
+    public static final boolean DEVELOPER_MODE = false;
 
     @Override
     public void onBackPressed() {
@@ -34,6 +36,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (DEVELOPER_MODE) {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                    .detectDiskReads()
+                    .detectDiskWrites()
+                    .detectNetwork()   // or .detectAll() for all detectable problems
+                    .penaltyLog()
+                    .build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                    .detectLeakedSqlLiteObjects()
+                    .detectLeakedClosableObjects()
+                    .penaltyLog()
+                    .penaltyDeath()
+                    .build());
+        }
+
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
                 .replace(R.id.fragment_container, new ChecklistItemsFragment())
@@ -42,11 +59,6 @@ public class MainActivity extends AppCompatActivity {
         bindViews();
 
         setSupportActionBar(topToolbar);
-
-//        createEntry("Simple checklist item", "1");
-//        deleteItem(11);
-//        updateItem(3);
-//        showResults();
     }
 
     public void bottomToolbarOnClick(View view) {

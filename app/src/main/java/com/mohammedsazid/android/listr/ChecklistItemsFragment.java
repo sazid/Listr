@@ -30,7 +30,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +40,20 @@ import com.mohammedsazid.android.listr.data.ListProvider;
 public class ChecklistItemsFragment extends Fragment {
 
     RecyclerView checklistItemsRv;
+    Cursor cursor;
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        closeCursor();
+    }
+
+    private void closeCursor() {
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+            cursor = null;
+        }
+    }
 
     public ChecklistItemsFragment() {
     }
@@ -59,7 +72,8 @@ public class ChecklistItemsFragment extends Fragment {
         Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
         Uri uri = builder.build();
 
-        Cursor cursor = getActivity().getContentResolver().query(
+        closeCursor();
+        cursor = getActivity().getContentResolver().query(
                 uri,
                 new String[]{
                         ListDbContract.ChecklistItems._ID,

@@ -47,6 +47,7 @@ import com.mohammedsazid.android.listr.data.ListProvider;
 
 public class ChecklistItemEditor extends Fragment {
 
+    Cursor cursor = null;
     EditText checklistItemContentEt;
     Bundle bundle;
     String content;
@@ -90,7 +91,6 @@ public class ChecklistItemEditor extends Fragment {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
                             deleteItem(id);
-                            Toast.makeText(getActivity(), "Item deleted", Toast.LENGTH_SHORT).show();
 
                             content = "";
                             getActivity().getSupportFragmentManager().popBackStack("editor", FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -115,7 +115,8 @@ public class ChecklistItemEditor extends Fragment {
             Uri uri = ContentUris.withAppendedId(
                     ListProvider.CONTENT_URI.buildUpon().appendPath("items").build(), id);
 
-            Cursor cursor = getActivity().getContentResolver().query(
+            closeCursor();
+            cursor = getActivity().getContentResolver().query(
                     uri,
                     new String[]{
                             ListDbContract.ChecklistItems._ID,
@@ -146,6 +147,19 @@ public class ChecklistItemEditor extends Fragment {
         saveContentToDisk();
 
         super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        closeCursor();
+    }
+
+    private void closeCursor() {
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+            cursor = null;
+        }
     }
 
     private void saveContentToDisk() {
