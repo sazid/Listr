@@ -1,8 +1,5 @@
 package com.mohammedsazid.android.listr;
 
-import android.content.ContentUris;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
@@ -10,17 +7,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
-
-import com.mohammedsazid.android.listr.data.ListDbContract;
-import com.mohammedsazid.android.listr.data.ListProvider;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    Toolbar topToolbar;
-
     public static final boolean DEVELOPER_MODE = false;
+    Toolbar topToolbar;
 
     @Override
     public void onBackPressed() {
