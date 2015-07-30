@@ -51,6 +51,10 @@ public class ChecklistItemsFragment extends Fragment {
 
         bindViews(view);
 
+        return view;
+    }
+
+    private void getChecklistItems() {
         Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
         Uri uri = builder.build();
 
@@ -72,11 +76,15 @@ public class ChecklistItemsFragment extends Fragment {
         checklistItemsRv.setAdapter(checklistItemsRvAdapter);
         checklistItemsRv.setHasFixedSize(true);
         checklistItemsRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        return view;
     }
 
     private void bindViews(View rootView) {
         checklistItemsRv = (RecyclerView) rootView.findViewById(R.id.checklist_items_rv);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getChecklistItems();
     }
 }
