@@ -30,13 +30,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.mohammedsazid.android.listr.data.ListDbContract;
 import com.mohammedsazid.android.listr.data.ListProvider;
 
@@ -57,16 +62,56 @@ public class ChecklistItemEditor extends Fragment {
         View view = inflater.inflate(R.layout.fragment_checklist_item_editor, container, false);
 
         bundle = getArguments();
-        id = bundle.getInt("ID", -1);
+
+        if (bundle != null) {
+            id = bundle.getInt("ID", -1);
+        }
 
         bindViews(view);
         loadContent();
 
+        setHasOptionsMenu(true);
+
         return view;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int menuId = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (menuId == R.id.action_delete) {
+            new MaterialDialog.Builder(getActivity())
+                    .title("Delete")
+                    .content("Do you really want to delete the item?")
+                    .positiveText("Ok")
+                    .negativeText("Cancel")
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
+                            deleteItem(id);
+                            Toast.makeText(getActivity(), "Item deleted", Toast.LENGTH_SHORT).show();
+
+                            content = "";
+                            getActivity().getSupportFragmentManager().popBackStack("editor", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        }
+                    })
+                    .show();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_editor, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
     private void loadContent() {
-        if (id > -1) {
+        if (bundle != null && id > -1) {
             Uri uri = ContentUris.withAppendedId(
                     ListProvider.CONTENT_URI.buildUpon().appendPath("items").build(), id);
 
@@ -104,7 +149,7 @@ public class ChecklistItemEditor extends Fragment {
     }
 
     private void saveContentToDisk() {
-        if (id > -1) {
+        if (bundle != null && id > -1) {
             content = checklistItemContentEt.getText().toString();
             updateItem(id);
         } else {
@@ -119,11 +164,17 @@ public class ChecklistItemEditor extends Fragment {
                 values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, "0");
 
                 Uri insertUri = getActivity().getContentResolver().insert(uri, values);
+            } else {
+                Toast.makeText(getActivity(), "Empty item discarded.", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     private void updateItem(long id) {
+        if (TextUtils.isEmpty(content)) {
+            deleteItem(id);
+        }
+
         Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
         Uri uri = ContentUris.withAppendedId(builder.build(), id);
 
@@ -137,5 +188,22 @@ public class ChecklistItemEditor extends Fragment {
                 null,
                 null
         );
+    }
+
+    private void deleteItem(long id) {
+        Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
+        Uri uri = ContentUris.withAppendedId(builder.build(), id);
+
+        int count = getActivity().getContentResolver().delete(
+                uri,
+                null,
+                null
+        );
+
+        if (TextUtils.isEmpty(content)) {
+            Toast.makeText(getActivity(), "Empty item discarded.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity(), "Item deleted.", Toast.LENGTH_SHORT).show();
+        }
     }
 }
