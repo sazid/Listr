@@ -81,6 +81,7 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
                 fragment.setArguments(bundle);
 
                 mActivity.getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
                         .replace(R.id.fragment_container, fragment)
                         .addToBackStack("editor")
                         .commit();

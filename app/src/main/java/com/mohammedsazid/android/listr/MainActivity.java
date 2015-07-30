@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
                 .replace(R.id.fragment_container, new ChecklistItemsFragment())
                 .commit();
 
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void bottomToolbarOnClick(View view) {
         getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
                 .replace(R.id.fragment_container, new ChecklistItemEditor())
                 .addToBackStack("editor")
                 .commit();
