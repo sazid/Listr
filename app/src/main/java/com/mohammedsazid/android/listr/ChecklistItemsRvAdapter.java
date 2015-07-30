@@ -23,6 +23,7 @@
 
 package com.mohammedsazid.android.listr;
 
+import android.app.Activity;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -43,11 +44,11 @@ import com.mohammedsazid.android.listr.data.ListProvider;
 
 public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItemsRvAdapter.ViewHolder> {
 
-    private Context mContext;
+    private Activity mActivity;
 
-    public ChecklistItemsRvAdapter(Context context, Cursor cursor) {
+    public ChecklistItemsRvAdapter(Activity activity, Cursor cursor) {
         super(cursor);
-        mContext = context;
+        mActivity = activity;
     }
 
     @Override
@@ -88,7 +89,7 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
                 values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, isChecked);
                 Uri uri = ContentUris.withAppendedId(ListProvider.CONTENT_URI.buildUpon().appendPath("items").build(), _id);
 
-                int count = mContext.getContentResolver().update(uri, values, null, null);
+                int count = mActivity.getContentResolver().update(uri, values, null, null);
 
 //                Log.v("Count",
 //                        ".\nID: " + _id
