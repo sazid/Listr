@@ -50,8 +50,8 @@ public class ListDbContract {
                     + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + COLUMN_LABEL + " TEXT NOT NULL, "
                     + COLUMN_CHECKED_STATE + " INTEGER NOT NULL, "
-                    + COLUMN_LAST_MODIFIED + " INTEGER NOT NULL, "
-                    + COLUMN_PRIORITY + " INTEGER NOT NULL "
+                    + COLUMN_PRIORITY + " INTEGER NOT NULL, "
+                    + COLUMN_LAST_MODIFIED + " INTEGER NOT NULL "
                     + ")" +
                     ";";
 

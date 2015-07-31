@@ -56,9 +56,11 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
     @Override
     public void onBindViewHolderCursor(final ViewHolder holder, final Cursor cursor) {
         final String label = cursor.getString(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_LABEL));
-        String checkedState = cursor.getString(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE));
+        int checkedState = cursor.getInt(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE));
+        int priorityState = cursor.getInt(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_PRIORITY));
 
-        final boolean checked = !checkedState.equals("0");
+        final boolean checked = checkedState != 0;
+        final boolean priorityChecked = priorityState != 0;
 
         if (checked) {
             holder.checklistItemLabelTv.setPaintFlags(holder.checklistItemLabelTv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -89,8 +91,14 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
             }
         });
 
+        // For the checkbox
         holder.checklistItemCheckBox.setOnCheckedChangeListener(null);
         holder.checklistItemCheckBox.setChecked(checked);
+
+        // For the priority toggle
+        holder.checklistItemPriority.setOnCheckedChangeListener(null);
+        holder.checklistItemPriority.setChecked(priorityChecked);
+
         holder.checklistItemCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -106,8 +114,11 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
                     holder.checklistItemLabelTv.setTextColor(Color.BLACK);
                 }
 
+                long currentTime = System.currentTimeMillis();
+
                 ContentValues values = new ContentValues();
                 values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, isChecked);
+                values.put(ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED, currentTime);
                 Uri uri = ContentUris.withAppendedId(ListProvider.CONTENT_URI.buildUpon().appendPath("items").build(), _id);
 
                 int count = mActivity.getContentResolver().update(uri, values, null, null);
@@ -119,6 +130,23 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
 //                                + "\nIs checked: " + String.valueOf(isChecked)
 //                                + "\nPosition: " + holder.getPosition()
 //                );
+            }
+        });
+
+        holder.checklistItemPriority.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                int position = holder.getAdapterPosition();
+                cursor.moveToPosition(position);
+                int _id = cursor.getInt(cursor.getColumnIndex("_id"));
+                long currentTime = System.currentTimeMillis();
+
+                ContentValues values = new ContentValues();
+                values.put(ListDbContract.ChecklistItems.COLUMN_PRIORITY, isChecked);
+                values.put(ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED, currentTime);
+                Uri uri = ContentUris.withAppendedId(ListProvider.CONTENT_URI.buildUpon().appendPath("items").build(), _id);
+
+                int count = mActivity.getContentResolver().update(uri, values, null, null);
             }
         });
     }
@@ -137,11 +165,13 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
 
         TextView checklistItemLabelTv;
         CheckBox checklistItemCheckBox;
+        CheckBox checklistItemPriority;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             checklistItemCheckBox = (CheckBox) itemView.findViewById(R.id.checklist_item_checkBox);
+            checklistItemPriority = (CheckBox) itemView.findViewById(R.id.checklist_item_priority);
             checklistItemLabelTv = (TextView) itemView.findViewById(R.id.checklist_item_label);
         }
 

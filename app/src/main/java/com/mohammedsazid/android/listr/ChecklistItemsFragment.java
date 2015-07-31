@@ -43,6 +43,9 @@ public class ChecklistItemsFragment extends Fragment {
     RecyclerView checklistItemsRv;
     Cursor cursor;
 
+    public ChecklistItemsFragment() {
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -54,9 +57,6 @@ public class ChecklistItemsFragment extends Fragment {
             cursor.close();
             cursor = null;
         }
-    }
-
-    public ChecklistItemsFragment() {
     }
 
     @Nullable
@@ -79,7 +79,9 @@ public class ChecklistItemsFragment extends Fragment {
                 new String[]{
                         ListDbContract.ChecklistItems._ID,
                         ListDbContract.ChecklistItems.COLUMN_LABEL,
-                        ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE
+                        ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE,
+                        ListDbContract.ChecklistItems.COLUMN_PRIORITY,
+                        ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED
                 },
                 null,
                 null,

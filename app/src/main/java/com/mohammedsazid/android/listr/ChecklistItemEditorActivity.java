@@ -50,6 +50,7 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
     String previousContent;
     int id;
     boolean checkedState;
+    boolean priorityState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +122,9 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
                     new String[]{
                             ListDbContract.ChecklistItems._ID,
                             ListDbContract.ChecklistItems.COLUMN_LABEL,
-                            ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE
+                            ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE,
+                            ListDbContract.ChecklistItems.COLUMN_PRIORITY,
+                            ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED
                     },
                     null,
                     null,
@@ -131,8 +134,10 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
 
             content = previousContent = cursor.getString(
                     cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_LABEL));
-            checkedState = !cursor.getString(
-                    cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE)).equals("0");
+            checkedState = cursor.getInt(
+                    cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE)) != 0;
+            priorityState = cursor.getInt(
+                    cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_PRIORITY)) != 0;
 
             checklistItemContentEt.setText(content);
         }
@@ -168,12 +173,16 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
             String content = checklistItemContentEt.getText().toString();
 
             if (!TextUtils.isEmpty(content)) {
+                long currentTime = System.currentTimeMillis();
+
                 Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
                 Uri uri = builder.build();
 
                 ContentValues values = new ContentValues();
                 values.put(ListDbContract.ChecklistItems.COLUMN_LABEL, content);
-                values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, "0");
+                values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, 0);
+                values.put(ListDbContract.ChecklistItems.COLUMN_PRIORITY, 0);
+                values.put(ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED, currentTime);
 
                 Uri insertUri = this.getContentResolver().insert(uri, values);
 
@@ -189,12 +198,16 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
             deleteItem(id);
         }
 
+        long currentTime = System.currentTimeMillis();
+
         Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
         Uri uri = ContentUris.withAppendedId(builder.build(), id);
 
         ContentValues values = new ContentValues();
         values.put(ListDbContract.ChecklistItems.COLUMN_LABEL, content);
         values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, checkedState);
+        values.put(ListDbContract.ChecklistItems.COLUMN_PRIORITY, checkedState);
+        values.put(ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED, currentTime);
 
         int count = this.getContentResolver().update(
                 uri,

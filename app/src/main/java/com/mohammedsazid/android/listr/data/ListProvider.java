@@ -69,7 +69,11 @@ public class ListProvider extends ContentProvider {
 
         if (sortOrder == null || sortOrder == "") {
             // By default, sort items based on their checked state
-            sortOrder = ChecklistItems.COLUMN_CHECKED_STATE;
+            sortOrder = ChecklistItems.COLUMN_CHECKED_STATE + " ASC"
+                    + ", "
+                    + ChecklistItems.COLUMN_PRIORITY + " DESC"
+                    + ", "
+                    + ChecklistItems.COLUMN_LAST_MODIFIED + " DESC";
         }
 
         switch (uriMatcher.match(uri)) {
