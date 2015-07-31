@@ -61,7 +61,7 @@ public class ListDbContract {
 
         public static final void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
             // For now, drop the table and create a new blank one
-            database.execSQL("DROP TABLE " + TABLE_NAME + " IF EXISTS");
+            database.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
             onCreate(database);
         }
 
