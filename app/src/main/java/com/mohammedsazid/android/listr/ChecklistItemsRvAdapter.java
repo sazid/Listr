@@ -77,17 +77,6 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
                 cursor.moveToPosition(position);
                 int _id = cursor.getInt(cursor.getColumnIndex("_id"));
 
-//                ChecklistItemEditorFragment fragment = new ChecklistItemEditorFragment();
-//                Bundle bundle = new Bundle();
-//                bundle.putInt("ID", _id);
-//                fragment.setArguments(bundle);
-//
-//                mActivity.getSupportFragmentManager().beginTransaction()
-//                        .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
-////                        .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-//                        .replace(R.id.fragment_container, fragment)
-//                        .addToBackStack("editor")
-//                        .commit();
                 Intent intent = new Intent(mActivity, ChecklistItemEditorActivity.class);
                 intent.putExtra("_id", _id);
 //                intent.putExtra("label", label);
