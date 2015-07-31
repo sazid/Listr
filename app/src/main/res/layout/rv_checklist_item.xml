@@ -45,23 +45,37 @@
                 android:id="@+id/checklist_item_checkBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:gravity="center_vertical" />
+                android:gravity="center_vertical"
+                android:layout_below="@+id/checklist_item_label"
+                android:layout_alignLeft="@+id/checklist_item_label"
+                android:layout_alignStart="@+id/checklist_item_label" />
 
             <TextView
                 android:id="@+id/checklist_item_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/checklist_item_checkBox"
-                android:layout_toRightOf="@+id/checklist_item_checkBox"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:maxLines="3"
                 android:text="This is an item."
                 android:textAppearance="?android:attr/textAppearanceListItem" />
+
+            <CheckBox
+                android:id="@+id/toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:button="@drawable/favourite_check"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:textOff=""
+                android:textOn=""
+                android:layout_below="@+id/checklist_item_label"
+                android:layout_toRightOf="@+id/checklist_item_checkBox"
+                android:layout_toEndOf="@+id/checklist_item_checkBox" />
 
         </RelativeLayout>
 
