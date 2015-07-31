@@ -31,7 +31,7 @@ import com.mohammedsazid.android.listr.data.ListDbContract.ChecklistItems;
 
 public class ListDbOpenHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "listr.db";
 
     public ListDbOpenHelper(Context context) {

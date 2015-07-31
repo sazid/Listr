@@ -37,6 +37,11 @@ public class ListDbContract {
         public static final String COLUMN_LABEL = "label";
         // 0 -> FALSE, 1 -> TRUE
         public static final String COLUMN_CHECKED_STATE = "checked_state";
+        // last modified value of the item
+        public static final String COLUMN_LAST_MODIFIED = "last_modified";
+        // task priority
+        // 0 -> Default priority, 1 -> High priority
+        public static final String COLUMN_PRIORITY = "priority";
 
         // SQL query for creating the table
         public static final String DATABASE_CREATE_SQL =
@@ -44,8 +49,10 @@ public class ListDbContract {
                     " ("
                     + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + COLUMN_LABEL + " TEXT NOT NULL, "
-                    + COLUMN_CHECKED_STATE + " INTEGER NOT NULL" +
-                    ")" +
+                    + COLUMN_CHECKED_STATE + " INTEGER NOT NULL"
+                    + COLUMN_LAST_MODIFIED + " INTEGER NOT NULL"
+                    + COLUMN_PRIORITY + " INTEGER NOT NULL"
+                    + ")" +
                     ";";
 
         public static final void onCreate(SQLiteDatabase database) {
