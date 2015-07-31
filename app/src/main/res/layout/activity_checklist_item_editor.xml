@@ -61,8 +61,8 @@
             android:hint="Type something..."
             android:inputType="textMultiLine|textAutoCorrect|textCapSentences"
             android:padding="16dp"
-            android:singleLine="false"
-            android:transitionName="item_label" />
+            android:singleLine="false" />
+
     </RelativeLayout>
 
 </RelativeLayout>
