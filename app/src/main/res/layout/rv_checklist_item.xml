@@ -49,6 +49,7 @@
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="3"
-        android:text="This is an item." />
+        android:text="This is an item."
+        android:textAppearance="?android:attr/textAppearanceListItem" />
 
 </RelativeLayout>

@@ -1,5 +1,6 @@
 package com.mohammedsazid.android.listr;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentManager;
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         }
 
         getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
+//                .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
                 .replace(R.id.fragment_container, new ChecklistItemsFragment())
                 .commit();
 
@@ -58,11 +59,8 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     }
 
     public void bottomToolbarOnClick(View view) {
-        getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
-                .replace(R.id.fragment_container, new ChecklistItemEditorFragment())
-                .addToBackStack("editor")
-                .commit();
+        Intent intent = new Intent(this, ChecklistItemEditorActivity.class);
+        startActivity(intent);
     }
 
     private void bindViews() {

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mohammedsazid.android.listr">
+    package="com.mohammedsazid.android.listr" >
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,6 +21,15 @@
             android:name=".data.ListProvider"
             android:authorities="com.mohammedsazid.android.listr.data.ListProvider"
             android:exported="false" />
+
+        <activity
+            android:name=".ChecklistItemEditorActivity"
+            android:label="@string/title_activity_checklist_item_editor"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.mohammedsazid.android.listr.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
