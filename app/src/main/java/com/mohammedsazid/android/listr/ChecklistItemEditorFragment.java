@@ -45,7 +45,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.mohammedsazid.android.listr.data.ListDbContract;
 import com.mohammedsazid.android.listr.data.ListProvider;
 
-public class ChecklistItemEditor extends Fragment {
+public class ChecklistItemEditorFragment extends Fragment {
 
     Cursor cursor = null;
     EditText checklistItemContentEt;
@@ -54,7 +54,7 @@ public class ChecklistItemEditor extends Fragment {
     int id;
     boolean checkedState;
 
-    public ChecklistItemEditor() {
+    public ChecklistItemEditorFragment() {
     }
 
     @Nullable

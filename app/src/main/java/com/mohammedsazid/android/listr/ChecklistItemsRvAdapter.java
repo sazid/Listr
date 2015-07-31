@@ -75,7 +75,7 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
                 cursor.moveToPosition(position);
                 int _id = cursor.getInt(cursor.getColumnIndex("_id"));
 
-                ChecklistItemEditor fragment = new ChecklistItemEditor();
+                ChecklistItemEditorFragment fragment = new ChecklistItemEditorFragment();
                 Bundle bundle = new Bundle();
                 bundle.putInt("ID", _id);
                 fragment.setArguments(bundle);

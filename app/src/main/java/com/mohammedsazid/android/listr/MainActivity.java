@@ -2,6 +2,7 @@ package com.mohammedsazid.android.listr;
 
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -9,7 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
 
     public static final boolean DEVELOPER_MODE = false;
     Toolbar topToolbar;
@@ -51,13 +52,15 @@ public class MainActivity extends AppCompatActivity {
         bindViews();
 
         setSupportActionBar(topToolbar);
-        topToolbar.setTitleTextColor(getResources().getColor(R.color.white));
+
+        getSupportFragmentManager().addOnBackStackChangedListener(this);
+        shouldDisplayHomeUp();
     }
 
     public void bottomToolbarOnClick(View view) {
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
-                .replace(R.id.fragment_container, new ChecklistItemEditor())
+                .replace(R.id.fragment_container, new ChecklistItemEditorFragment())
                 .addToBackStack("editor")
                 .commit();
     }
@@ -172,5 +175,23 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        shouldDisplayHomeUp();
+    }
+
+    private void shouldDisplayHomeUp() {
+        // Enable the up button only if there are entries in the back stack
+        boolean canGoBack = getSupportFragmentManager().getBackStackEntryCount() > 0;
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(canGoBack);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        getSupportFragmentManager().popBackStack();
+        return true;
     }
 }
