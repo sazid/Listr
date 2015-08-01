@@ -23,19 +23,20 @@
 
 package com.mohammedsazid.android.listr;
 
-import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,12 +54,15 @@ public class NotifyActivity extends AppCompatActivity {
     Cursor cursor = null;
     TextView tv;
     CheckBox priorityCb;
+    Ringtone ringtone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notify);
+
+        acquireLock();
 
         id = getIntent().getIntExtra("_id", -1);
 
@@ -74,21 +78,54 @@ public class NotifyActivity extends AppCompatActivity {
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_done)
                         .setContentTitle("Listr")
-                        .setSound(notificationSoundUri)
-                        .setVibrate(new long[] {300, 100, 400, 100})
+//                        .setSound(notificationSoundUri)
+                        .setVibrate(new long[]{300, 100, 400, 100})
+                        .setAutoCancel(true)
                         .setContentText(content);
 
         Intent resultIntent = new Intent(this, ChecklistItemEditorActivity.class);
         resultIntent.putExtra("_id", id);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, id, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        builder.setContentIntent(pendingIntent);
         NotificationManager notifMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        Notification notification = builder.build();
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        notifMgr.notify(id, notification);
+        notifMgr.notify(id, builder.build());
 
+        Uri alarmSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        if (alarmSoundUri == null) {
+            alarmSoundUri = notificationSoundUri;
+        }
+
+        ringtone = RingtoneManager.getRingtone(this, alarmSoundUri);
+        ringtone.play();
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                removeLock();
+                if (ringtone.isPlaying()) {
+                    ringtone.stop();
+                }
+            }
+        }, 1000 * 60 * 4);
+
+    }
+
+    private void acquireLock() {
+        getWindow().addFlags(
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+        );
+    }
+
+    private void removeLock() {
+        getWindow().clearFlags(
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+        );
     }
 
     @Override
@@ -152,6 +189,15 @@ public class NotifyActivity extends AppCompatActivity {
             Toast.makeText(this, "Item checked.", Toast.LENGTH_SHORT).show();
             super.onBackPressed();
         }
+    }
+
+    public void stopAlarm(View view) {
+        removeLock();
+        if (ringtone.isPlaying()) {
+            ringtone.stop();
+        }
+
+        view.setVisibility(View.INVISIBLE);
     }
 
 }
