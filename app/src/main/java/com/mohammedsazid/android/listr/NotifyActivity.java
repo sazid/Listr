@@ -114,7 +114,7 @@ public class NotifyActivity extends AppCompatActivity {
 
     public void checkItem(View view) {
         ContentValues values = new ContentValues();
-        values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, checkedState);
+        values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, true);
         values.put(ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED, System.currentTimeMillis());
         Uri uri = ContentUris.withAppendedId(ListProvider.CONTENT_URI.buildUpon().appendPath("items").build(), id);
 
