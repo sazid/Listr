@@ -38,4 +38,18 @@
         android:icon="@drawable/ic_delete"
         android:title="@string/action_delete"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_notify"
+        android:icon="@drawable/ic_notification_active"
+        android:orderInCategory="2"
+        android:title="Notify"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_notify_off"
+        android:icon="@drawable/ic_notification_off"
+        android:orderInCategory="99"
+        android:title="Notify off"
+        app:showAsAction="ifRoom" />
 </menu>

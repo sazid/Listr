@@ -42,6 +42,8 @@ public class ListDbContract {
         // task priority
         // 0 -> Default priority, 1 -> High priority
         public static final String COLUMN_PRIORITY = "priority";
+        // notify time, -1 when disabled
+        public static final String COLUMN_NOTIFY_TIME = "notify_time";
 
         // SQL query for creating the table
         public static final String DATABASE_CREATE_SQL =
@@ -51,7 +53,8 @@ public class ListDbContract {
                     + COLUMN_LABEL + " TEXT NOT NULL, "
                     + COLUMN_CHECKED_STATE + " INTEGER NOT NULL, "
                     + COLUMN_PRIORITY + " INTEGER NOT NULL, "
-                    + COLUMN_LAST_MODIFIED + " INTEGER NOT NULL "
+                    + COLUMN_LAST_MODIFIED + " INTEGER NOT NULL, "
+                    + COLUMN_NOTIFY_TIME + " INTEGER NOT NULL DEFAULT (-1) "
                     + ")" +
                     ";";
 

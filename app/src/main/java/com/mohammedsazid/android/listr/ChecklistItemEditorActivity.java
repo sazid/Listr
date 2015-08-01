@@ -23,15 +23,21 @@
 
 package com.mohammedsazid.android.listr;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -41,8 +47,12 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.mohammedsazid.android.listr.data.ListDbContract;
 import com.mohammedsazid.android.listr.data.ListProvider;
 
+import java.util.Calendar;
+
 public class ChecklistItemEditorActivity extends AppCompatActivity {
 
+    private static int timeHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+    private static int timeMinute = Calendar.getInstance().get(Calendar.MINUTE);
     Toolbar toolbar;
     Cursor cursor = null;
     EditText checklistItemContentEt;
@@ -51,6 +61,9 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
     int id;
     boolean checkedState;
     boolean priorityState;
+    long notifyTime = -1;
+    private AlarmManager alarmManager;
+    private PendingIntent pendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +79,12 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
         } catch (Exception e) {
         }
         loadContent();
+
+        Intent intent = new Intent(this, NotifyActivity.class);
+        intent.putExtra("_id", id);
+
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        pendingIntent = PendingIntent.getActivity(this, id, intent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
     private void bindViews() {
@@ -87,25 +106,35 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int menuId = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (menuId == R.id.action_delete) {
-            new MaterialDialog.Builder(ChecklistItemEditorActivity.this)
-                    .title("Delete")
-                    .content("Do you really want to delete the item?")
-                    .positiveText("Ok")
-                    .negativeText("Cancel")
-                    .callback(new MaterialDialog.ButtonCallback() {
-                        @Override
-                        public void onPositive(MaterialDialog dialog) {
-                            deleteItem(id);
-                            content = "";
-                            Intent intent = new Intent(ChecklistItemEditorActivity.this, MainActivity.class);
-                            startActivity(intent);
-                        }
-                    })
-                    .show();
+        switch (menuId) {
+            case R.id.action_delete:
+                new MaterialDialog.Builder(ChecklistItemEditorActivity.this)
+                        .title("Delete")
+                        .content("Do you really want to delete the item?")
+                        .positiveText("Ok")
+                        .negativeText("Cancel")
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                deleteItem(id);
+                                content = "";
+                                Intent intent = new Intent(ChecklistItemEditorActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            }
+                        })
+                        .show();
 
-            return true;
+                return true;
+            case R.id.action_notify:
+                TimePickerFragment fragment = new TimePickerFragment(new AlarmHandler());
+                getSupportFragmentManager().beginTransaction()
+                        .add(fragment, "time_picker")
+                        .commit();
+
+                return true;
+            case R.id.action_notify_off:
+                cancelAlarm();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -124,7 +153,8 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
                             ListDbContract.ChecklistItems.COLUMN_LABEL,
                             ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE,
                             ListDbContract.ChecklistItems.COLUMN_PRIORITY,
-                            ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED
+                            ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED,
+                            ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME
                     },
                     null,
                     null,
@@ -183,6 +213,7 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
                 values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, 0);
                 values.put(ListDbContract.ChecklistItems.COLUMN_PRIORITY, 0);
                 values.put(ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED, currentTime);
+                values.put(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME, -1);
 
                 Uri insertUri = this.getContentResolver().insert(uri, values);
 
@@ -208,6 +239,7 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
         values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, checkedState);
         values.put(ListDbContract.ChecklistItems.COLUMN_PRIORITY, checkedState);
         values.put(ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED, currentTime);
+        values.put(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME, notifyTime);
 
         int count = this.getContentResolver().update(
                 uri,
@@ -235,6 +267,42 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
             Toast.makeText(this, "Empty item discarded.", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Item deleted.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void setAlarm() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, timeHour);
+        calendar.set(Calendar.MINUTE, timeMinute);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        }
+
+        notifyTime = calendar.getTimeInMillis();
+
+        Toast.makeText(this, "Notification set", Toast.LENGTH_SHORT).show();
+    }
+
+    private void cancelAlarm() {
+        if (alarmManager != null) {
+            alarmManager.cancel(pendingIntent);
+            notifyTime = -1;
+            Toast.makeText(this, "Notification cancelled", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    class AlarmHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            Bundle bundle = msg.getData();
+            timeHour = bundle.getInt("time_hour");
+            timeMinute = bundle.getInt("time_minute");
+            setAlarm();
+
+            Log.d("TIME", timeHour + ": " + timeMinute);
         }
     }
 

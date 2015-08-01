@@ -81,7 +81,8 @@ public class ChecklistItemsFragment extends Fragment {
                         ListDbContract.ChecklistItems.COLUMN_LABEL,
                         ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE,
                         ListDbContract.ChecklistItems.COLUMN_PRIORITY,
-                        ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED
+                        ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED,
+                        ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME
                 },
                 null,
                 null,
