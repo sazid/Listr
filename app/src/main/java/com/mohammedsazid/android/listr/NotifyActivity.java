@@ -72,6 +72,12 @@ public class NotifyActivity extends AppCompatActivity {
         tv.setText(content);
         priorityCb.setChecked(priorityState);
 
+        sendNotification();
+        unsetAlarm();
+
+    }
+
+    private void sendNotification() {
         Uri notificationSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         NotificationCompat.Builder builder =
@@ -107,7 +113,6 @@ public class NotifyActivity extends AppCompatActivity {
                 }
             }
         }, 1000 * 60 * 4);
-
     }
 
     private void acquireLock() {
@@ -193,6 +198,15 @@ public class NotifyActivity extends AppCompatActivity {
             Toast.makeText(this, "Item checked.", Toast.LENGTH_SHORT).show();
             super.onBackPressed();
         }
+    }
+
+    private void unsetAlarm() {
+        ContentValues values = new ContentValues();
+        values.put(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME, -1);
+        values.put(ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED, System.currentTimeMillis());
+        Uri uri = ContentUris.withAppendedId(ListProvider.CONTENT_URI.buildUpon().appendPath("items").build(), id);
+
+        int count = getContentResolver().update(uri, values, null, null);
     }
 
     public void stopAlarm(View view) {
