@@ -195,10 +195,7 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
     private void saveContentToDisk() {
         if (id > -1) {
             content = checklistItemContentEt.getText().toString();
-
-            if (!content.equals(previousContent)) {
-                updateItem(id);
-            }
+            updateItem(id);
         } else {
             String content = checklistItemContentEt.getText().toString();
 
@@ -235,11 +232,17 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
         Uri uri = ContentUris.withAppendedId(builder.build(), id);
 
         ContentValues values = new ContentValues();
-        values.put(ListDbContract.ChecklistItems.COLUMN_LABEL, content);
-        values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, checkedState);
-        values.put(ListDbContract.ChecklistItems.COLUMN_PRIORITY, checkedState);
+
+        if (!content.equals(previousContent)) {
+            values.put(ListDbContract.ChecklistItems.COLUMN_LABEL, content);
+            values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, checkedState);
+            values.put(ListDbContract.ChecklistItems.COLUMN_PRIORITY, checkedState);
+        }
+
         values.put(ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED, currentTime);
         values.put(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME, notifyTime);
+
+        Log.v("TEST", notifyTime + "");
 
         int count = this.getContentResolver().update(
                 uri,
@@ -248,7 +251,7 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
                 null
         );
 
-        if (count > 0) {
+        if (!content.equals(previousContent) && count > 0) {
             Toast.makeText(this, "Item updated.", Toast.LENGTH_SHORT).show();
         }
     }
