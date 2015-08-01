@@ -36,14 +36,18 @@
         android:id="@+id/req_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/checklist_item_priority"
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="5"
         android:singleLine="false"
         android:text="@string/hello_world"
         android:textColor="@android:color/black"
-        android:textSize="28sp" />
+        android:textStyle="bold"
+        android:textSize="28sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/view" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/view"
@@ -65,21 +69,22 @@
         android:layout_toStartOf="@+id/view"
         android:onClick="stopAlarm"
         android:src="@drawable/ic_alarm_off"
-        app:fabSize="mini" />
+        app:fabSize="mini"
+        android:id="@+id/view2" />
 
     <CheckBox
         android:id="@+id/checklist_item_priority"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:background="@android:color/transparent"
         android:button="@drawable/favourite_check"
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:textOff=""
-        android:textOn="" />
+        android:textOn=""
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
