@@ -131,6 +131,10 @@ public class NotifyActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         closeCursor();
+        removeLock();
+        if (ringtone.isPlaying()) {
+            ringtone.stop();
+        }
         super.onStop();
     }
 
