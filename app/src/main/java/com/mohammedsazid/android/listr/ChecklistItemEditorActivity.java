@@ -61,6 +61,7 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
     int id;
     boolean checkedState;
     boolean priorityState;
+    boolean alarmState;
     long notifyTime = -1;
     Menu menu;
     private AlarmManager alarmManager;
@@ -100,6 +101,17 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_checklist_item_editor, menu);
 
         setOptionVisibility(menu, R.id.action_notify_off, false);
+        setOptionVisibility(menu, R.id.action_notify, false);
+
+        if (alarmState) {
+            setOptionVisibility(menu, R.id.action_notify, false);
+            setOptionVisibility(menu, R.id.action_notify_off, true);
+        } else {
+            setOptionVisibility(menu, R.id.action_notify, true);
+            setOptionVisibility(menu, R.id.action_notify_off, false);
+        }
+
+        Log.v("ALARMSTATE", alarmState + "");
         return true;
     }
 
@@ -177,7 +189,12 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
                     cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE)) != 0;
             priorityState = cursor.getInt(
                     cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_PRIORITY)) != 0;
+            alarmState = cursor.getLong(
+                    cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME)) > -1;
 
+            Log.v("ALARMSTATE", alarmState + "");
+            Log.v("ALARMSTATE", cursor.getLong(
+                    cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME)) + "");
             checklistItemContentEt.setText(content);
         }
     }

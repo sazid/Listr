@@ -45,10 +45,10 @@
                 android:id="@+id/checklist_item_checkBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_below="@+id/checklist_item_label"
                 android:layout_alignLeft="@+id/checklist_item_label"
-                android:layout_alignStart="@+id/checklist_item_label" />
+                android:layout_alignStart="@+id/checklist_item_label"
+                android:layout_below="@+id/checklist_item_label"
+                android:gravity="center_vertical" />
 
             <TextView
                 android:id="@+id/checklist_item_label"
@@ -67,15 +67,30 @@
                 android:id="@+id/checklist_item_priority"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/checklist_item_label"
+                android:layout_toEndOf="@+id/checklist_item_checkBox"
+                android:layout_toRightOf="@+id/checklist_item_checkBox"
                 android:background="@android:color/transparent"
                 android:button="@drawable/favourite_check"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:textOff=""
-                android:textOn=""
+                android:textOn="" />
+
+            <CheckBox
+                android:id="@+id/checklist_item_notify"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/checklist_item_label"
-                android:layout_toRightOf="@+id/checklist_item_checkBox"
-                android:layout_toEndOf="@+id/checklist_item_checkBox" />
+                android:layout_toEndOf="@+id/checklist_item_priority"
+                android:layout_toRightOf="@+id/checklist_item_priority"
+                android:background="@android:color/transparent"
+                android:button="@drawable/alarm_check"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:textOff=""
+                android:textOn="" />
 
         </RelativeLayout>
 

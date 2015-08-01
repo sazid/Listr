@@ -30,10 +30,8 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
-import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +57,7 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
         int checkedState = cursor.getInt(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE));
         int priorityState = cursor.getInt(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_PRIORITY));
 
+        boolean notifyChecked = cursor.getLong(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME)) > -1;
         final boolean checked = checkedState != 0;
         final boolean priorityChecked = priorityState != 0;
 
@@ -91,13 +90,16 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
             }
         });
 
+        // For the notification icon
+        holder.checklistItemCheckBox.setChecked(checked);
+        holder.checklistItemPriority.setChecked(priorityChecked);
+        holder.checklistItemNotify.setChecked(notifyChecked);
+
         // For the checkbox
         holder.checklistItemCheckBox.setOnCheckedChangeListener(null);
-        holder.checklistItemCheckBox.setChecked(checked);
 
         // For the priority toggle
         holder.checklistItemPriority.setOnCheckedChangeListener(null);
-        holder.checklistItemPriority.setChecked(priorityChecked);
 
         holder.checklistItemCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -122,14 +124,6 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
                 Uri uri = ContentUris.withAppendedId(ListProvider.CONTENT_URI.buildUpon().appendPath("items").build(), _id);
 
                 int count = mActivity.getContentResolver().update(uri, values, null, null);
-
-//                Log.v("Count",
-//                        ".\nID: " + _id
-//                                + "\nLabel: " + label
-//                                + "\nUpdate count: " + String.valueOf(count)
-//                                + "\nIs checked: " + String.valueOf(isChecked)
-//                                + "\nPosition: " + holder.getPosition()
-//                );
             }
         });
 
@@ -166,13 +160,15 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
         TextView checklistItemLabelTv;
         CheckBox checklistItemCheckBox;
         CheckBox checklistItemPriority;
+        CheckBox checklistItemNotify;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
+            checklistItemLabelTv = (TextView) itemView.findViewById(R.id.checklist_item_label);
             checklistItemCheckBox = (CheckBox) itemView.findViewById(R.id.checklist_item_checkBox);
             checklistItemPriority = (CheckBox) itemView.findViewById(R.id.checklist_item_priority);
-            checklistItemLabelTv = (TextView) itemView.findViewById(R.id.checklist_item_label);
+            checklistItemNotify = (CheckBox) itemView.findViewById(R.id.checklist_item_notify);
         }
 
     }
