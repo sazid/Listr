@@ -37,7 +37,6 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -111,7 +110,6 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
             setOptionVisibility(menu, R.id.action_notify_off, false);
         }
 
-        Log.v("ALARMSTATE", alarmState + "");
         return true;
     }
 
@@ -191,10 +189,9 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
                     cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_PRIORITY)) != 0;
             alarmState = cursor.getLong(
                     cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME)) > -1;
+            notifyTime = cursor.getLong(
+                    cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME));
 
-            Log.v("ALARMSTATE", alarmState + "");
-            Log.v("ALARMSTATE", cursor.getLong(
-                    cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME)) + "");
             checklistItemContentEt.setText(content);
         }
     }
@@ -268,8 +265,6 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
         values.put(ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED, currentTime);
         values.put(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME, notifyTime);
 
-        Log.v("TEST", notifyTime + "");
-
         int count = this.getContentResolver().update(
                 uri,
                 values,
@@ -334,8 +329,6 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
             timeHour = bundle.getInt("time_hour");
             timeMinute = bundle.getInt("time_minute");
             setAlarm();
-
-            Log.d("TIME", timeHour + ": " + timeMinute);
         }
     }
 
