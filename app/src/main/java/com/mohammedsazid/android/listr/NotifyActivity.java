@@ -23,11 +23,17 @@
 
 package com.mohammedsazid.android.listr;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CheckBox;
@@ -61,6 +67,28 @@ public class NotifyActivity extends AppCompatActivity {
 
         tv.setText(content);
         priorityCb.setChecked(priorityState);
+
+        Uri notificationSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_done)
+                        .setContentTitle("Listr")
+                        .setSound(notificationSoundUri)
+                        .setVibrate(new long[] {300, 100, 400, 100})
+                        .setContentText(content);
+
+        Intent resultIntent = new Intent(this, ChecklistItemEditorActivity.class);
+        resultIntent.putExtra("_id", id);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, id, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        builder.setContentIntent(pendingIntent);
+        NotificationManager notifMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        Notification notification = builder.build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notifMgr.notify(id, notification);
+
     }
 
     @Override
