@@ -62,6 +62,7 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
     boolean checkedState;
     boolean priorityState;
     long notifyTime = -1;
+    Menu menu;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
 
@@ -95,7 +96,10 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.menu_checklist_item_editor, menu);
+
+        setOptionVisibility(menu, R.id.action_notify_off, false);
         return true;
     }
 
@@ -138,6 +142,11 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setOptionVisibility(Menu menu, int id, boolean visible) {
+        MenuItem item = menu.findItem(id);
+        item.setVisible(visible);
     }
 
     private void loadContent() {
@@ -286,14 +295,18 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
 
         notifyTime = calendar.getTimeInMillis();
 
-        Toast.makeText(this, "Notification set", Toast.LENGTH_SHORT).show();
+        setOptionVisibility(menu, R.id.action_notify_off, true);
+        setOptionVisibility(menu, R.id.action_notify, false);
+        Toast.makeText(this, "Alarm set", Toast.LENGTH_SHORT).show();
     }
 
     private void cancelAlarm() {
         if (alarmManager != null) {
             alarmManager.cancel(pendingIntent);
             notifyTime = -1;
-            Toast.makeText(this, "Notification cancelled", Toast.LENGTH_SHORT).show();
+            setOptionVisibility(menu, R.id.action_notify_off, false);
+            setOptionVisibility(menu, R.id.action_notify, true);
+            Toast.makeText(this, "Alarm cancelled", Toast.LENGTH_SHORT).show();
         }
     }
 
