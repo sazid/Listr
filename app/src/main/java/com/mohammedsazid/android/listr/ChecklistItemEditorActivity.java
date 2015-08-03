@@ -293,6 +293,8 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
                 null
         );
 
+        alarmManager.cancel(pendingIntent);
+
         if (TextUtils.isEmpty(content)) {
             Toast.makeText(this, "Empty item discarded.", Toast.LENGTH_SHORT).show();
         } else {
