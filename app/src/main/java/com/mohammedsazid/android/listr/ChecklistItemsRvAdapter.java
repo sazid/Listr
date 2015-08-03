@@ -79,6 +79,7 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
                 int _id = cursor.getInt(cursor.getColumnIndex("_id"));
 
                 Intent intent = new Intent(mActivity, ChecklistItemEditorActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("_id", _id);
 //                intent.putExtra("label", label);
 //
