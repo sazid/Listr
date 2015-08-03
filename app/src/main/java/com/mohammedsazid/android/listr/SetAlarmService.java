@@ -67,7 +67,7 @@ public class SetAlarmService extends IntentService {
 
                 if (notifyTime > -1 && notifyTime > System.currentTimeMillis()) {
                     Intent i = new Intent(this, NotifyActivity.class);
-                    PendingIntent pendingIntent = PendingIntent.getActivity(this, id, i, PendingIntent.FLAG_CANCEL_CURRENT);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(this, id, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         am.setExact(AlarmManager.RTC_WAKEUP, notifyTime, pendingIntent);
