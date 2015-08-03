@@ -46,6 +46,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.mohammedsazid.android.listr.data.ListDbContract;
 import com.mohammedsazid.android.listr.data.ListProvider;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class ChecklistItemEditorActivity extends AppCompatActivity {
@@ -86,6 +87,11 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
 
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         pendingIntent = PendingIntent.getActivity(this, id, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        if (alarmState) {
+            String alarmText = (new SimpleDateFormat("hh:mm a").format(notifyTime));
+            getSupportActionBar().setTitle("@ " + alarmText);
+        }
     }
 
     private void bindViews() {
@@ -260,9 +266,9 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
             values.put(ListDbContract.ChecklistItems.COLUMN_LABEL, content);
             values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, checkedState);
             values.put(ListDbContract.ChecklistItems.COLUMN_PRIORITY, checkedState);
+            values.put(ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED, currentTime);
         }
 
-        values.put(ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED, currentTime);
         values.put(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME, notifyTime);
 
         int count = this.getContentResolver().update(
