@@ -24,6 +24,7 @@
 package com.mohammedsazid.android.listr;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -62,8 +63,6 @@ public class NotifyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notify);
 
-        acquireLock();
-
         id = getIntent().getIntExtra("_id", -1);
 
         loadContent();
@@ -73,8 +72,14 @@ public class NotifyActivity extends AppCompatActivity {
         priorityCb.setChecked(priorityState);
 
         sendNotification();
-        unsetAlarm();
 
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        //Screen On
+        acquireLock();
     }
 
     private void sendNotification() {
@@ -84,13 +89,16 @@ public class NotifyActivity extends AppCompatActivity {
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_done)
                         .setContentTitle("Listr")
-//                        .setSound(notificationSoundUri)
-                        .setVibrate(new long[]{300, 100, 400, 100})
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                        .setVibrate(new long[]{400, 100, 400, 100, 400})
                         .setAutoCancel(true)
                         .setContentText(content);
 
+
         Intent resultIntent = new Intent(this, ChecklistItemEditorActivity.class);
         resultIntent.putExtra("_id", id);
+        PendingIntent intentForService = PendingIntent.getService(this, id, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        builder.setContentIntent(intentForService);
 
         NotificationManager notifMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notifMgr.notify(id, builder.build());
@@ -107,21 +115,18 @@ public class NotifyActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                stopAlarm(null);
                 removeLock();
-                if (ringtone.isPlaying()) {
-                    ringtone.stop();
-                }
             }
-        }, 1000 * 60 * 4);
+        }, 1000 * 60 * 5);
     }
 
     private void acquireLock() {
         getWindow().addFlags(
-                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
-                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
-                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-        );
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                        | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
     }
 
     private void removeLock() {
@@ -135,11 +140,8 @@ public class NotifyActivity extends AppCompatActivity {
 
     @Override
     public void onStop() {
+        stopAlarm(null);
         closeCursor();
-        removeLock();
-        if (ringtone.isPlaying()) {
-            ringtone.stop();
-        }
         super.onStop();
     }
 
@@ -210,12 +212,14 @@ public class NotifyActivity extends AppCompatActivity {
     }
 
     public void stopAlarm(View view) {
-        removeLock();
-        if (ringtone.isPlaying()) {
+        unsetAlarm();
+        if (ringtone != null && ringtone.isPlaying()) {
             ringtone.stop();
         }
 
-        view.setVisibility(View.INVISIBLE);
+        if (view != null && view.getVisibility() == View.VISIBLE) {
+            view.setVisibility(View.INVISIBLE);
+        }
     }
 
 }

@@ -86,10 +86,10 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
         intent.putExtra("_id", id);
 
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        pendingIntent = PendingIntent.getActivity(this, id, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        pendingIntent = PendingIntent.getActivity(this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         if (alarmState) {
-            String alarmText = (new SimpleDateFormat("hh:mm a").format(notifyTime));
+            String alarmText = (new SimpleDateFormat("h:mm a").format(notifyTime));
             getSupportActionBar().setTitle("@ " + alarmText);
         }
     }
