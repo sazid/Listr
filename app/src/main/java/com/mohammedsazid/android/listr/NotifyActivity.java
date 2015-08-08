@@ -46,6 +46,8 @@ import android.widget.Toast;
 import com.mohammedsazid.android.listr.data.ListDbContract;
 import com.mohammedsazid.android.listr.data.ListProvider;
 
+import java.text.SimpleDateFormat;
+
 
 public class NotifyActivity extends AppCompatActivity {
 
@@ -54,9 +56,11 @@ public class NotifyActivity extends AppCompatActivity {
     boolean checkedState;
     boolean priorityState;
     Cursor cursor = null;
-    TextView tv;
+    TextView reqContentTv;
+    TextView reqTimeTv;
     CheckBox priorityCb;
     Ringtone ringtone;
+    long notifyTime = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +73,10 @@ public class NotifyActivity extends AppCompatActivity {
         loadContent();
         bindViews();
 
-        tv.setText(content);
+
+        String alarmText = (new SimpleDateFormat("h:mm a").format(notifyTime));
+        reqContentTv.setText(content);
+        reqTimeTv.setText(alarmText);
         priorityCb.setChecked(priorityState);
 
     }
@@ -160,7 +167,8 @@ public class NotifyActivity extends AppCompatActivity {
     }
 
     private void bindViews() {
-        tv = (TextView) findViewById(R.id.req_content);
+        reqContentTv = (TextView) findViewById(R.id.req_content);
+        reqTimeTv = (TextView) findViewById(R.id.req_time);
         priorityCb = (CheckBox) findViewById(R.id.checklist_item_priority);
     }
 
@@ -199,6 +207,8 @@ public class NotifyActivity extends AppCompatActivity {
                     cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE)) != 0;
             priorityState = cursor.getInt(
                     cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_PRIORITY)) != 0;
+            notifyTime = cursor.getLong(
+                    cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME));
         }
     }
 
