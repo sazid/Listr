@@ -23,8 +23,8 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- When selected, use grey -->
-    <item android:drawable="@drawable/ic_notification_active_green" android:state_checked="true" />
+    <item android:drawable="@drawable/ic_notification_active_black" android:state_checked="true" />
     <!-- When not selected, use white-->
-    <item android:drawable="@drawable/ic_notification_off_green" android:state_checked="false" />
+    <item android:drawable="@drawable/ic_notification_off_black" android:state_checked="false" />
 
 </selector>
