@@ -23,6 +23,7 @@
 
 package com.mohammedsazid.android.listr;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentUris;
@@ -61,6 +62,8 @@ public class NotifyActivity extends AppCompatActivity {
     CheckBox priorityCb;
     Ringtone ringtone;
     long notifyTime = -1;
+    NotificationManager notifMgr;
+    private Notification notification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,8 +111,9 @@ public class NotifyActivity extends AppCompatActivity {
 
         builder.setContentIntent(intentForService);
 
-        NotificationManager notifMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notifMgr.notify(id, builder.build());
+        notifMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notification = builder.build();
+        notifMgr.notify(id, notification);
 
         Uri alarmSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         if (alarmSoundUri == null) {
@@ -243,6 +247,13 @@ public class NotifyActivity extends AppCompatActivity {
 
         if (view != null && view.getVisibility() == View.VISIBLE) {
             view.setVisibility(View.INVISIBLE);
+
+            if (notifMgr != null && notification != null) {
+                notifMgr.cancel(id);
+                Intent resultIntent = new Intent(this, ChecklistItemEditorActivity.class);
+                resultIntent.putExtra("_id", id);
+                startService(resultIntent);
+            }
         }
     }
 
