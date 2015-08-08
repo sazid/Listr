@@ -105,6 +105,5 @@ public class ChecklistItemsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         getChecklistItems();
-        Log.v("Callbacks", "onResume() fragment");
     }
 }

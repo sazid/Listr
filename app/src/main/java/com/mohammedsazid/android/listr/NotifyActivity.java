@@ -29,6 +29,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -71,8 +72,6 @@ public class NotifyActivity extends AppCompatActivity {
         tv.setText(content);
         priorityCb.setChecked(priorityState);
 
-        sendNotification();
-
     }
 
     @Override
@@ -83,21 +82,23 @@ public class NotifyActivity extends AppCompatActivity {
     }
 
     private void sendNotification() {
+        Intent resultIntent = new Intent(this, ChecklistItemEditorActivity.class);
+        resultIntent.putExtra("_id", id);
+        PendingIntent intentForService = PendingIntent.getService(this, id, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         Uri notificationSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_done)
                         .setContentTitle("Listr")
-                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+//                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                         .setVibrate(new long[]{400, 100, 400, 100, 400})
                         .setAutoCancel(true)
+                        .setLights(Color.RED, 3000, 1000)
+                        .setDeleteIntent(intentForService)
                         .setContentText(content);
 
 
-        Intent resultIntent = new Intent(this, ChecklistItemEditorActivity.class);
-        resultIntent.putExtra("_id", id);
-        PendingIntent intentForService = PendingIntent.getService(this, id, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         builder.setContentIntent(intentForService);
 
         NotificationManager notifMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -106,10 +107,16 @@ public class NotifyActivity extends AppCompatActivity {
         Uri alarmSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         if (alarmSoundUri == null) {
             alarmSoundUri = notificationSoundUri;
+
+            if (alarmSoundUri == null) {
+                alarmSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+            }
         }
 
-        ringtone = RingtoneManager.getRingtone(this, alarmSoundUri);
-        ringtone.play();
+        if (alarmSoundUri != null) {
+            ringtone = RingtoneManager.getRingtone(this, alarmSoundUri);
+            ringtone.play();
+        }
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -119,6 +126,13 @@ public class NotifyActivity extends AppCompatActivity {
                 removeLock();
             }
         }, 1000 * 60 * 5);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        sendNotification();
     }
 
     private void acquireLock() {
@@ -140,14 +154,9 @@ public class NotifyActivity extends AppCompatActivity {
 
     @Override
     public void onStop() {
-        closeCursor();
         super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
         stopAlarm(null);
-        super.onDestroy();
+        closeCursor();
     }
 
     private void bindViews() {
