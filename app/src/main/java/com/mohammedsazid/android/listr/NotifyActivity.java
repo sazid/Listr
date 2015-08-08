@@ -140,9 +140,14 @@ public class NotifyActivity extends AppCompatActivity {
 
     @Override
     public void onStop() {
-        stopAlarm(null);
         closeCursor();
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopAlarm(null);
+        super.onDestroy();
     }
 
     private void bindViews() {
