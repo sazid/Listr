@@ -25,17 +25,26 @@ package com.mohammedsazid.android.listr;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
+import android.support.v4.app.NotificationCompat;
 
 import com.mohammedsazid.android.listr.data.ListDbContract;
 import com.mohammedsazid.android.listr.data.ListProvider;
 
 public class SetAlarmService extends IntentService {
+
+    NotificationManager notifMgr;
+    private Notification notification;
 
     public SetAlarmService() {
         super("SetAlarmService");
@@ -48,7 +57,8 @@ public class SetAlarmService extends IntentService {
                 uri,
                 new String[]{
                         ListDbContract.ChecklistItems._ID,
-                        ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME
+                        ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME,
+                        ListDbContract.ChecklistItems.COLUMN_LABEL
                 },
                 null,
                 null,
@@ -57,31 +67,66 @@ public class SetAlarmService extends IntentService {
         cursor.moveToFirst();
 
         AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-        int id;
-        long notifyTime;
+        int id = -1;
+        long notifyTime = -1;
+        String content = "";
 
         do {
             if (cursor.getCount() > 0) {
                 id = cursor.getInt(cursor.getColumnIndex(ListDbContract.ChecklistItems._ID));
                 notifyTime = cursor.getLong(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME));
+                content = cursor.getString(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_LABEL));
 
-                if (notifyTime > -1 && notifyTime > System.currentTimeMillis()) {
+                if (notifyTime > -1 && notifyTime >= System.currentTimeMillis()) {
                     Intent i = new Intent(this, NotifyActivity.class);
                     i.putExtra("_id", id);
-                    PendingIntent pendingIntent = PendingIntent.getActivity(this, id, i, PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(this, id, i, PendingIntent.FLAG_CANCEL_CURRENT);
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         am.setExact(AlarmManager.RTC_WAKEUP, notifyTime, pendingIntent);
                     } else {
                         am.set(AlarmManager.RTC_WAKEUP, notifyTime, pendingIntent);
                     }
+                } else if (notifyTime > -1 && notifyTime < System.currentTimeMillis()) {
+                    Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
+                    Uri updateUri = ContentUris.withAppendedId(builder.build(), id);
+
+                    ContentValues values = new ContentValues();
+                    values.put(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME, -1);
+
+                    getContentResolver().update(updateUri, values, null, null);
+
+                    createNotification(content, id);
                 }
-                // TODO: Set notifyTime to -1 if the notify time is less than current system time
 
                 cursor.moveToNext();
             }
         } while (!cursor.isAfterLast());
 
         cursor.close();
+    }
+
+    private void createNotification(String content, int id) {
+        Intent resultIntent = new Intent(this, ChecklistItemEditorActivity.class);
+        resultIntent.putExtra("_id", id);
+        PendingIntent intentForService = PendingIntent.getActivity(this, id, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_done)
+                        .setContentTitle("Missed task")
+//                        .setVibrate(new long[]{400, 100, 400, 100, 400})
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                        .setAutoCancel(true)
+                        .setLights(Color.RED, 3000, 1000)
+                        .setContentIntent(intentForService)
+                        .setContentText(content);
+
+
+        builder.setContentIntent(intentForService);
+
+        notifMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notification = builder.build();
+        notifMgr.notify(id, notification);
     }
 }
