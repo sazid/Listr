@@ -120,7 +120,9 @@ public class SetAlarmService extends IntentService {
                         .setAutoCancel(true)
                         .setLights(Color.RED, 3000, 1000)
                         .setContentIntent(intentForService)
-                        .setContentText(content);
+                        .setContentText(content)
+                        .setStyle(new NotificationCompat.BigTextStyle()
+                                .bigText(content));
 
 
         builder.setContentIntent(intentForService);

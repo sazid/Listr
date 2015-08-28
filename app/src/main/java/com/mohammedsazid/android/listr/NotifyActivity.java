@@ -107,7 +107,9 @@ public class NotifyActivity extends AppCompatActivity {
                         .setLights(Color.RED, 3000, 1000)
                         .setContentIntent(intentForService)
                         .setDeleteIntent(intentForService)
-                        .setContentText(content);
+                        .setContentText(content)
+                        .setStyle(new NotificationCompat.BigTextStyle()
+                                .bigText(content));
 
 
         builder.setContentIntent(intentForService);
