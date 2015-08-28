@@ -113,7 +113,7 @@ public class SetAlarmService extends IntentService {
 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_done)
+                        .setSmallIcon(R.drawable.ic_cross)
                         .setContentTitle("Missed task")
 //                        .setVibrate(new long[]{400, 100, 400, 100, 400})
                         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
