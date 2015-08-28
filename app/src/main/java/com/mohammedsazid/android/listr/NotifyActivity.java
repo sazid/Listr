@@ -66,6 +66,9 @@ public class NotifyActivity extends AppCompatActivity {
     NotificationManager notifMgr;
     private Notification notification;
 
+    Handler handler;
+    Runnable runnable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -108,12 +111,12 @@ public class NotifyActivity extends AppCompatActivity {
                         .setContentTitle("Listr")
 //                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                         .setVibrate(new long[]{400, 100, 400, 100, 400})
-                        .setAutoCancel(true)
                         .setLights(Color.RED, 3000, 1000)
                         .setContentIntent(intentForActivity)
 //                        .setDeleteIntent(intentForService)
                         .setContentText(content)
                         .setPriority(NotificationCompat.PRIORITY_MAX)
+                        .setAutoCancel(true)
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(content));
 
@@ -135,8 +138,8 @@ public class NotifyActivity extends AppCompatActivity {
             ringtone.play();
         }
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        handler = new Handler();
+        runnable = new Runnable() {
             @Override
             public void run() {
                 stopAlarm(null);
@@ -145,7 +148,10 @@ public class NotifyActivity extends AppCompatActivity {
                 builder.setContentTitle("Missed task");
                 notifMgr.notify(id, builder.build());
             }
-        }, ALARM_TIMER);
+        };
+
+        handler.postDelayed(runnable, ALARM_TIMER);
+        handler.removeCallbacks(null);
     }
 
     @Override
@@ -228,6 +234,7 @@ public class NotifyActivity extends AppCompatActivity {
     public void checkItem(View view) {
         ContentValues values = new ContentValues();
         values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, true);
+        values.put(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME, -1);
         values.put(ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED, System.currentTimeMillis());
         Uri uri = ContentUris.withAppendedId(ListProvider.CONTENT_URI.buildUpon().appendPath("items").build(), id);
 
@@ -264,6 +271,8 @@ public class NotifyActivity extends AppCompatActivity {
                 startService(resultIntent);
             }
         }
+
+        handler.removeCallbacks(runnable);
     }
 
 }
