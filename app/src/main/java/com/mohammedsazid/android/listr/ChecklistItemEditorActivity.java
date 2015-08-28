@@ -327,7 +327,11 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
 
         setOptionVisibility(menu, R.id.action_notify_off, true);
         setOptionVisibility(menu, R.id.action_notify, false);
-        Toast.makeText(this, "Alarm set", Toast.LENGTH_SHORT).show();
+
+        String alarmText = (new SimpleDateFormat("h:mm a").format(notifyTime));
+        getSupportActionBar().setTitle("@ " + alarmText);
+
+//        Toast.makeText(this, "Alarm set", Toast.LENGTH_SHORT).show();
     }
 
     private void cancelAlarm() {
@@ -336,7 +340,10 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
             notifyTime = -1;
             setOptionVisibility(menu, R.id.action_notify_off, false);
             setOptionVisibility(menu, R.id.action_notify, true);
-            Toast.makeText(this, "Alarm cancelled", Toast.LENGTH_SHORT).show();
+
+            getSupportActionBar().setTitle("Edit Item");
+
+//            Toast.makeText(this, "Alarm cancelled", Toast.LENGTH_SHORT).show();
         }
     }
 
