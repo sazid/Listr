@@ -112,14 +112,12 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
         setOptionVisibility(menu, R.id.action_notify_off, false);
         setOptionVisibility(menu, R.id.action_notify, false);
 
-        if (id > -1) {
-            if (alarmState) {
-                setOptionVisibility(menu, R.id.action_notify, false);
-                setOptionVisibility(menu, R.id.action_notify_off, true);
-            } else {
-                setOptionVisibility(menu, R.id.action_notify, true);
-                setOptionVisibility(menu, R.id.action_notify_off, false);
-            }
+        if (alarmState) {
+            setOptionVisibility(menu, R.id.action_notify, false);
+            setOptionVisibility(menu, R.id.action_notify_off, true);
+        } else {
+            setOptionVisibility(menu, R.id.action_notify, true);
+            setOptionVisibility(menu, R.id.action_notify_off, false);
         }
 
         return true;
@@ -248,9 +246,19 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
                 values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, 0);
                 values.put(ListDbContract.ChecklistItems.COLUMN_PRIORITY, 0);
                 values.put(ListDbContract.ChecklistItems.COLUMN_LAST_MODIFIED, currentTime);
-                values.put(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME, -1);
+                values.put(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME, notifyTime);
 
                 Uri insertUri = this.getContentResolver().insert(uri, values);
+                id = Integer.parseInt(insertUri.getLastPathSegment());
+
+                Intent intent = new Intent(this, NotifyService.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.putExtra("_id", id);
+
+                alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                pendingIntent = PendingIntent.getService(this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                setAlarm();
 
                 Toast.makeText(this, "New item inserted.", Toast.LENGTH_SHORT).show();
             } else {
@@ -290,6 +298,8 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
         if (!content.equals(previousContent) && count > 0) {
             Toast.makeText(this, "Item updated.", Toast.LENGTH_SHORT).show();
         }
+
+        setAlarm();
     }
 
     private void deleteItem(long id) {
@@ -316,41 +326,19 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
     }
 
     private void setAlarm() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, timeHour);
-        calendar.set(Calendar.MINUTE, timeMinute);
+        if (notifyTime > -1 && notifyTime > System.currentTimeMillis()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, notifyTime, pendingIntent);
+            } else {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, notifyTime, pendingIntent);
+            }
 
-        notifyTime = calendar.getTimeInMillis();
+            setOptionVisibility(menu, R.id.action_notify_off, true);
+            setOptionVisibility(menu, R.id.action_notify, false);
 
-        /*
-        If the time selected by the user is
-        less than the current time then schedule it for the next day
-         */
-        if (notifyTime <= System.currentTimeMillis()) {
-            // add 1 day to the user selected time
-            calendar.add(Calendar.DATE, 1);
-
-            Toast.makeText(
-                    ChecklistItemEditorActivity.this,
-                    "Alarm set for tomorrow!",
-                    Toast.LENGTH_SHORT).show();
-
-            notifyTime = calendar.getTimeInMillis();
+            String alarmText = (new SimpleDateFormat("h:mm a").format(notifyTime));
+            getSupportActionBar().setTitle("@ " + alarmText);
         }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-        } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-        }
-
-        setOptionVisibility(menu, R.id.action_notify_off, true);
-        setOptionVisibility(menu, R.id.action_notify, false);
-
-        String alarmText = (new SimpleDateFormat("h:mm a").format(notifyTime));
-        getSupportActionBar().setTitle("@ " + alarmText);
-
-//        Toast.makeText(this, "Alarm set", Toast.LENGTH_SHORT).show();
     }
 
     private void cancelAlarm() {
@@ -361,8 +349,6 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
             setOptionVisibility(menu, R.id.action_notify, true);
 
             getSupportActionBar().setTitle("Edit Item");
-
-//            Toast.makeText(this, "Alarm cancelled", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -372,7 +358,25 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
             Bundle bundle = msg.getData();
             timeHour = bundle.getInt("time_hour");
             timeMinute = bundle.getInt("time_minute");
-            setAlarm();
+//            setAlarm();
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, timeHour);
+            calendar.set(Calendar.MINUTE, timeMinute);
+
+            notifyTime = calendar.getTimeInMillis();
+
+            if (notifyTime <= System.currentTimeMillis()) {
+                // add 1 day to the user selected time
+                calendar.add(Calendar.DATE, 1);
+
+                Toast.makeText(
+                        ChecklistItemEditorActivity.this,
+                        "Alarm set for tomorrow!",
+                        Toast.LENGTH_SHORT).show();
+
+                notifyTime = calendar.getTimeInMillis();
+            }
         }
     }
 
