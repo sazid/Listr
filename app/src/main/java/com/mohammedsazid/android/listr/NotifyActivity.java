@@ -92,8 +92,8 @@ public class NotifyActivity extends AppCompatActivity {
     }
 
     private void sendNotification() {
-        Intent resultIntent = new Intent(this, ChecklistItemEditorActivity.class);
-        resultIntent.putExtra("_id", id);
+        Intent resultIntent = new Intent(this, SetAlarmService.class);
+//        resultIntent.putExtra("_id", id);
         PendingIntent intentForService = PendingIntent.getService(this, id, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         Uri notificationSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
@@ -105,6 +105,7 @@ public class NotifyActivity extends AppCompatActivity {
                         .setVibrate(new long[]{400, 100, 400, 100, 400})
                         .setAutoCancel(true)
                         .setLights(Color.RED, 3000, 1000)
+                        .setContentIntent(intentForService)
                         .setDeleteIntent(intentForService)
                         .setContentText(content);
 
