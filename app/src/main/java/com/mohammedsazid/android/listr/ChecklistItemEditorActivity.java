@@ -331,12 +331,14 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
                     ChecklistItemEditorActivity.this,
                     "Alarm set for tomorrow!",
                     Toast.LENGTH_SHORT).show();
+
+            notifyTime = calendar.getTimeInMillis();
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, notifyTime, pendingIntent);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, notifyTime, pendingIntent);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         }
 
         setOptionVisibility(menu, R.id.action_notify_off, true);
