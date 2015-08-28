@@ -317,13 +317,27 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
         calendar.set(Calendar.HOUR_OF_DAY, timeHour);
         calendar.set(Calendar.MINUTE, timeMinute);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-        } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        notifyTime = calendar.getTimeInMillis();
+
+        /*
+        If the time selected by the user is
+        less than the current time then schedule it for the next day
+         */
+        if (notifyTime <= System.currentTimeMillis()) {
+            // add 1 day to the user selected time
+            calendar.add(Calendar.DATE, 1);
+
+            Toast.makeText(
+                    ChecklistItemEditorActivity.this,
+                    "Alarm set for tomorrow!",
+                    Toast.LENGTH_SHORT).show();
         }
 
-        notifyTime = calendar.getTimeInMillis();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, notifyTime, pendingIntent);
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, notifyTime, pendingIntent);
+        }
 
         setOptionVisibility(menu, R.id.action_notify_off, true);
         setOptionVisibility(menu, R.id.action_notify, false);
