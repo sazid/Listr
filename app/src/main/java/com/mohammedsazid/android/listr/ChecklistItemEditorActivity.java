@@ -83,12 +83,12 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
         }
         loadContent();
 
-        Intent intent = new Intent(this, NotifyActivity.class);
+        Intent intent = new Intent(this, NotifyService.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         intent.putExtra("_id", id);
 
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        pendingIntent = PendingIntent.getActivity(this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        pendingIntent = PendingIntent.getService(this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         if (alarmState) {
             String alarmText = (new SimpleDateFormat("h:mm a").format(notifyTime));
