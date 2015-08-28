@@ -43,6 +43,7 @@ import com.mohammedsazid.android.listr.data.ListDbContract;
 import com.mohammedsazid.android.listr.data.ListProvider;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItemsRvAdapter.ViewHolder> {
 
@@ -105,7 +106,20 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
 
         holder.checklistItemNotify.setChecked(notifyChecked);
         if (holder.checklistItemNotify.isChecked()) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+
+            calendar.add(Calendar.DATE, 1);
+
             String alarmText = (new SimpleDateFormat("h:mm a").format(notifyTime));
+
+            if (notifyTime > calendar.getTimeInMillis()) {
+                alarmText = "Tomorrow " + alarmText;
+            }
+
             holder.checklistItemNotifyTimeTv.setText(alarmText);
 
             holder.checklistItemNotify.setVisibility(View.VISIBLE);
