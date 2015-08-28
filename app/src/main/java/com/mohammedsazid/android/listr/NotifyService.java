@@ -94,9 +94,13 @@ public class NotifyService extends IntentService {
         resultIntent.putExtra("_id", id);
         PendingIntent intentForActivity = PendingIntent.getActivity(this, id, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
+//        Intent taskCheckIntent = new Intent(this, TaskCheckService.class);
+//        taskCheckIntent.putExtra("_id", id);
+//        PendingIntent taskCheckPendingIntent = PendingIntent.getService(this, id, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setSmallIcon(R.drawable.ic_alarm_off)
                         .setContentTitle("Listr")
                         .setVibrate(new long[]{400, 100, 400, 100, 400})
                         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
@@ -105,7 +109,7 @@ public class NotifyService extends IntentService {
                         .setContentIntent(intentForActivity)
                         .setPriority(NotificationCompat.PRIORITY_MAX)
                         .setContentText(content)
-                        .addAction(R.drawable.ic_done, "Done", null)
+//                        .addAction(R.drawable.ic_done, "Done", taskCheckPendingIntent)
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(content));
 

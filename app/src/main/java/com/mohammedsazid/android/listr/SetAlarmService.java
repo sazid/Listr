@@ -111,22 +111,24 @@ public class SetAlarmService extends IntentService {
         resultIntent.putExtra("_id", id);
         PendingIntent intentForService = PendingIntent.getActivity(this, id, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
+//        Intent taskCheckIntent = new Intent(this, TaskCheckService.class);
+//        taskCheckIntent.putExtra("_id", id);
+//        PendingIntent taskCheckPendingIntent = PendingIntent.getService(this, id, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_cross)
                         .setContentTitle("Missed task")
-//                        .setVibrate(new long[]{400, 100, 400, 100, 400})
+                        .setVibrate(new long[]{400, 100, 400, 100, 400})
                         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                         .setAutoCancel(true)
                         .setLights(Color.RED, 3000, 1000)
                         .setContentIntent(intentForService)
                         .setPriority(NotificationCompat.PRIORITY_MAX)
                         .setContentText(content)
+//                        .addAction(R.drawable.ic_done, "Done", taskCheckPendingIntent)
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(content));
-
-
-        builder.setContentIntent(intentForService);
 
         notifMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notification = builder.build();
