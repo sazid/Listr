@@ -42,6 +42,8 @@ import android.widget.TextView;
 import com.mohammedsazid.android.listr.data.ListDbContract;
 import com.mohammedsazid.android.listr.data.ListProvider;
 
+import java.text.SimpleDateFormat;
+
 public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItemsRvAdapter.ViewHolder> {
 
     private FragmentActivity mActivity;
@@ -56,8 +58,9 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
         final String label = cursor.getString(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_LABEL));
         int checkedState = cursor.getInt(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE));
         int priorityState = cursor.getInt(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_PRIORITY));
+        long notifyTime = cursor.getLong(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME));
 
-        boolean notifyChecked = cursor.getLong(cursor.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_NOTIFY_TIME)) > -1;
+        boolean notifyChecked = notifyTime > -1;
         final boolean checked = checkedState != 0;
         final boolean priorityChecked = priorityState != 0;
 
@@ -94,7 +97,20 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
         // For the notification icon
         holder.checklistItemCheckBox.setChecked(checked);
         holder.checklistItemPriority.setChecked(priorityChecked);
+
+
+        holder.checklistItemNotifyTimeTv.setText("");
+        holder.checklistItemNotify.setVisibility(View.INVISIBLE);
+        holder.checklistItemNotifyTimeTv.setVisibility(View.INVISIBLE);
+
         holder.checklistItemNotify.setChecked(notifyChecked);
+        if (holder.checklistItemNotify.isChecked()) {
+            String alarmText = (new SimpleDateFormat("h:mm a").format(notifyTime));
+            holder.checklistItemNotifyTimeTv.setText(alarmText);
+
+            holder.checklistItemNotify.setVisibility(View.VISIBLE);
+            holder.checklistItemNotifyTimeTv.setVisibility(View.VISIBLE);
+        }
 
         // For the checkbox
         holder.checklistItemCheckBox.setOnCheckedChangeListener(null);
@@ -159,6 +175,7 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView checklistItemLabelTv;
+        TextView checklistItemNotifyTimeTv;
         CheckBox checklistItemCheckBox;
         CheckBox checklistItemPriority;
         CheckBox checklistItemNotify;
@@ -167,6 +184,7 @@ public class ChecklistItemsRvAdapter extends CursorRecyclerAdapter<ChecklistItem
             super(itemView);
 
             checklistItemLabelTv = (TextView) itemView.findViewById(R.id.checklist_item_label);
+            checklistItemNotifyTimeTv = (TextView) itemView.findViewById(R.id.checklist_item_notify_time);
             checklistItemCheckBox = (CheckBox) itemView.findViewById(R.id.checklist_item_checkBox);
             checklistItemPriority = (CheckBox) itemView.findViewById(R.id.checklist_item_priority);
             checklistItemNotify = (CheckBox) itemView.findViewById(R.id.checklist_item_notify);
