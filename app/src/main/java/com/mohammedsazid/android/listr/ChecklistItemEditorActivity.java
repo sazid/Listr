@@ -84,6 +84,7 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
         loadContent();
 
         Intent intent = new Intent(this, NotifyActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         intent.putExtra("_id", id);
 
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);

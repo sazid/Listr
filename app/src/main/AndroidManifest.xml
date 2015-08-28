@@ -34,7 +34,8 @@
         </activity>
         <activity
             android:name=".NotifyActivity"
-            android:label="@string/title_activity_notify">
+            android:label="@string/title_activity_notify"
+            android:noHistory="true">
         </activity>
 
         <service
