@@ -43,6 +43,11 @@
             android:enabled="true"
             android:exported="true" />
 
+        <service
+            android:name=".NotifyService"
+            android:enabled="true"
+            android:exported="true" />
+
         <receiver
             android:name=".AlarmBroadcastReceiver"
             android:enabled="true"
