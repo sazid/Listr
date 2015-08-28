@@ -62,6 +62,7 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
     boolean checkedState;
     boolean priorityState;
     boolean alarmState;
+    boolean deletePressed = false;
     long notifyTime = -1;
     Menu menu;
     private AlarmManager alarmManager;
@@ -136,6 +137,7 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
                         .callback(new MaterialDialog.ButtonCallback() {
                             @Override
                             public void onPositive(MaterialDialog dialog) {
+                                deletePressed = true;
                                 deleteItem(id);
                                 content = "";
                                 Intent intent = new Intent(ChecklistItemEditorActivity.this, MainActivity.class);
@@ -204,7 +206,9 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
 
     @Override
     public void onPause() {
-        saveContentToDisk();
+        if (!deletePressed) {
+            saveContentToDisk();
+        }
         super.onPause();
     }
 
@@ -284,22 +288,26 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
     }
 
     private void deleteItem(long id) {
-        Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
-        Uri uri = ContentUris.withAppendedId(builder.build(), id);
 
-        int count = this.getContentResolver().delete(
-                uri,
-                null,
-                null
-        );
+        if (id > -1) {
+            Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
+            Uri uri = ContentUris.withAppendedId(builder.build(), id);
 
-        alarmManager.cancel(pendingIntent);
+            int count = this.getContentResolver().delete(
+                    uri,
+                    null,
+                    null
+            );
 
-        if (TextUtils.isEmpty(content)) {
-            Toast.makeText(this, "Empty item discarded.", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Item deleted.", Toast.LENGTH_SHORT).show();
+            alarmManager.cancel(pendingIntent);
+
+            if (TextUtils.isEmpty(content)) {
+                Toast.makeText(this, "Empty item discarded.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Item deleted.", Toast.LENGTH_SHORT).show();
+            }
         }
+
     }
 
     private void setAlarm() {
