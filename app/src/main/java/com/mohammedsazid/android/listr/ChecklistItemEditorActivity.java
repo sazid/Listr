@@ -109,12 +109,14 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
         setOptionVisibility(menu, R.id.action_notify_off, false);
         setOptionVisibility(menu, R.id.action_notify, false);
 
-        if (alarmState) {
-            setOptionVisibility(menu, R.id.action_notify, false);
-            setOptionVisibility(menu, R.id.action_notify_off, true);
-        } else {
-            setOptionVisibility(menu, R.id.action_notify, true);
-            setOptionVisibility(menu, R.id.action_notify_off, false);
+        if (id > -1) {
+            if (alarmState) {
+                setOptionVisibility(menu, R.id.action_notify, false);
+                setOptionVisibility(menu, R.id.action_notify_off, true);
+            } else {
+                setOptionVisibility(menu, R.id.action_notify, true);
+                setOptionVisibility(menu, R.id.action_notify_off, false);
+            }
         }
 
         return true;
