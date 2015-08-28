@@ -34,11 +34,7 @@
         </activity>
         <activity
             android:name=".NotifyActivity"
-            android:label="@string/title_activity_notify"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.mohammedsazid.android.listr.MainActivity" />
+            android:label="@string/title_activity_notify">
         </activity>
 
         <service
