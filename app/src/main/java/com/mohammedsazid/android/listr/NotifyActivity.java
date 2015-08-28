@@ -108,6 +108,7 @@ public class NotifyActivity extends AppCompatActivity {
                         .setContentIntent(intentForService)
                         .setDeleteIntent(intentForService)
                         .setContentText(content)
+                        .setPriority(NotificationCompat.PRIORITY_MAX)
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(content));
 
