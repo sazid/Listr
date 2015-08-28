@@ -52,6 +52,7 @@ import java.text.SimpleDateFormat;
 
 public class NotifyActivity extends AppCompatActivity {
 
+    private static final long ALARM_TIMER = 1000 * 60 * 5;
     int id;
     String content;
     boolean checkedState;
@@ -92,12 +93,16 @@ public class NotifyActivity extends AppCompatActivity {
     }
 
     private void sendNotification() {
-        Intent resultIntent = new Intent(this, SetAlarmService.class);
-//        resultIntent.putExtra("_id", id);
-        PendingIntent intentForService = PendingIntent.getService(this, id, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+//        Intent resultIntentService = new Intent(this, SetAlarmService.class);
+        Intent resultIntentActivity = new Intent(this, ChecklistItemEditorActivity.class);
+        resultIntentActivity.putExtra("_id", id);
+
+//        PendingIntent intentForService = PendingIntent.getService(this, id, resultIntentService, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent intentForActivity = PendingIntent.getActivity(this, id, resultIntentActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+
         Uri notificationSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-        NotificationCompat.Builder builder =
+        final NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_done)
                         .setContentTitle("Listr")
@@ -105,15 +110,12 @@ public class NotifyActivity extends AppCompatActivity {
                         .setVibrate(new long[]{400, 100, 400, 100, 400})
                         .setAutoCancel(true)
                         .setLights(Color.RED, 3000, 1000)
-                        .setContentIntent(intentForService)
-                        .setDeleteIntent(intentForService)
+                        .setContentIntent(intentForActivity)
+//                        .setDeleteIntent(intentForService)
                         .setContentText(content)
                         .setPriority(NotificationCompat.PRIORITY_MAX)
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(content));
-
-
-        builder.setContentIntent(intentForService);
 
         notifMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notification = builder.build();
@@ -139,8 +141,11 @@ public class NotifyActivity extends AppCompatActivity {
             public void run() {
                 stopAlarm(null);
                 removeLock();
+                notifMgr.cancel(id);
+                builder.setContentTitle("Missed task");
+                notifMgr.notify(id, builder.build());
             }
-        }, 1000 * 60 * 5);
+        }, ALARM_TIMER);
     }
 
     @Override
