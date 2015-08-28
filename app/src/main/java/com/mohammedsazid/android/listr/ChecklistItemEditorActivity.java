@@ -93,6 +93,8 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
         if (alarmState) {
             String alarmText = (new SimpleDateFormat("h:mm a").format(notifyTime));
             getSupportActionBar().setTitle("@ " + alarmText);
+        } else if (id <= -1) {
+            getSupportActionBar().setTitle("New Item");
         }
     }
 
