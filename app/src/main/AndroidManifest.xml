@@ -30,7 +30,7 @@
             android:label=""
             android:parentActivityName=".MainActivity"
             android:screenOrientation="userPortrait"
-            android:windowSoftInputMode="stateHidden|adjustResize">
+            android:windowSoftInputMode="stateVisible|adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.mohammedsazid.android.listr.MainActivity" />
