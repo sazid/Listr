@@ -11,5 +11,6 @@
     </string>
 
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="ad_hint_text">Ad banner. Thank you for using Listr :)</string>
 
 </resources>
