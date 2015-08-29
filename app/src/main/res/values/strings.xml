@@ -5,4 +5,8 @@
     <string name="action_settings">Settings</string>
     <string name="action_delete">Delete</string>
     <string name="title_activity_notify">Notify</string>
+
+    <string name="about_summary">
+        Listr\nA minimalistic todo app.\n\n\nAuthor:\nMohammed Sazid Al Rashid\nTwitter: @sazidz\nG+: sazidozon\nXDA: sazid4199
+    </string>
 </resources>

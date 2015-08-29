@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 
 public class MainActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
 
@@ -168,8 +170,14 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_about:
+                new MaterialDialog.Builder(this)
+                        .title("About")
+                        .content(R.string.about_summary)
+                        .show();
+
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
