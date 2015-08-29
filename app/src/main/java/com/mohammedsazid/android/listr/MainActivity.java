@@ -1,6 +1,7 @@
 package com.mohammedsazid.android.listr;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentManager;
@@ -175,6 +176,19 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
                 new MaterialDialog.Builder(this)
                         .title("About")
                         .content(R.string.about_summary)
+                        .positiveText("Email")
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                super.onPositive(dialog);
+
+                                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                                        "mailto", "sazidozon@gmail.com", null));
+                                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "[Listr]: ");
+                                emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+                                startActivity(Intent.createChooser(emailIntent, "Send email..."));
+                            }
+                        })
                         .show();
 
                 return true;
