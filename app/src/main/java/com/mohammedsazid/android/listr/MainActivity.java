@@ -12,12 +12,16 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 
 public class MainActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
 
     public static final boolean DEVELOPER_MODE = false;
     Toolbar topToolbar;
+    AdView adView;
+    AdRequest adRequest;
 
     @Override
     public void onBackPressed() {
@@ -59,6 +63,12 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
         getSupportFragmentManager().addOnBackStackChangedListener(this);
         shouldDisplayHomeUp();
+
+        adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("0692bafb006beca7") // My Nexus 5
+                .build();
+        adView.loadAd(adRequest);
     }
 
     public void bottomToolbarOnClick(View view) {
@@ -67,94 +77,9 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     }
 
     private void bindViews() {
+        adView = (AdView) findViewById(R.id.adView);
         topToolbar = (Toolbar) findViewById(R.id.top_toolbar);
     }
-
-    /*
-    private void updateItem(long id) {
-        Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
-        Uri uri = ContentUris.withAppendedId(builder.build(), id);
-
-        ContentValues values = new ContentValues();
-        values.put(ListDbContract.ChecklistItems.COLUMN_LABEL, "Most simple item");
-        values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, "1");
-
-        int count = getContentResolver().update(
-                uri,
-                values,
-                null,
-                null
-        );
-
-        Toast.makeText(this, "Updated " + count + " item(s).", Toast.LENGTH_SHORT).show();
-    }
-
-    private void deleteItem(long id) {
-        Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
-        Uri uri = ContentUris.withAppendedId(builder.build(), id);
-
-        int count = getContentResolver().delete(
-                uri,
-                null,
-                null
-        );
-
-        Toast.makeText(this, "Deleted " + count + " items.", Toast.LENGTH_SHORT).show();
-    }
-
-    private void createEntry(String label, String checkedState) {
-        ContentValues values = new ContentValues();
-        values.put(ListDbContract.ChecklistItems.COLUMN_LABEL, label);
-        values.put(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE, checkedState);
-
-        Uri insertUri = getContentResolver().insert(
-                ListProvider.CONTENT_URI,
-                values
-        );
-
-        Toast.makeText(this, insertUri.toString(), Toast.LENGTH_SHORT).show();
-
-    }
-
-    private void showResults() {
-        TextView textView = (TextView) findViewById(R.id.textView);
-
-        Uri.Builder builder = ListProvider.CONTENT_URI.buildUpon().appendPath("items");
-        Uri uri = builder.build();
-
-        Cursor c = getContentResolver().query(
-                uri,
-                new String[] {
-                        ListDbContract.ChecklistItems.COLUMN_LABEL,
-                        ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE
-                },
-                null,
-                null,
-                null
-        );
-
-        c.moveToFirst();
-
-        String buildUpString = "";
-        while (!c.isAfterLast()) {
-            String label = c.getString(c.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_LABEL));
-            String checkedString = c.getString(c.getColumnIndex(ListDbContract.ChecklistItems.COLUMN_CHECKED_STATE));
-            if (checkedString.equals("0")) {
-                checkedString = "Unchecked";
-            } else if (checkedString.equals("1")) {
-                checkedString = "Checked";
-            }
-
-            buildUpString += label + ": " + checkedString + "\n";
-
-            c.moveToNext();
-        }
-
-
-        textView.setText(buildUpString);
-    }
-
-    */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

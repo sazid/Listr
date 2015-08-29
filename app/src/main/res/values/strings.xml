@@ -9,4 +9,7 @@
     <string name="about_summary">
         Listr\nA minimalistic todo app.\n\n\nAuthor:\nMohammed Sazid Al Rashid\nTwitter: @sazidz\nG+: sazidozon\nXDA: sazid4199
     </string>
+
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+
 </resources>
