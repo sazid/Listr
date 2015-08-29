@@ -91,10 +91,9 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
         pendingIntent = PendingIntent.getService(this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         if (alarmState) {
-            String alarmText = (new SimpleDateFormat("h:mm a").format(notifyTime));
-            getSupportActionBar().setTitle("@ " + alarmText);
+            getSupportActionBar().setTitle(getAlarmText(notifyTime));
         } else if (id <= -1) {
-            getSupportActionBar().setTitle("New Item");
+            getSupportActionBar().setTitle("");
         }
     }
 
@@ -336,8 +335,7 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
             setOptionVisibility(menu, R.id.action_notify_off, true);
             setOptionVisibility(menu, R.id.action_notify, false);
 
-            String alarmText = (new SimpleDateFormat("h:mm a").format(notifyTime));
-            getSupportActionBar().setTitle("@ " + alarmText);
+            getSupportActionBar().setTitle(getAlarmText(notifyTime));
         }
     }
 
@@ -348,7 +346,7 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
             setOptionVisibility(menu, R.id.action_notify_off, false);
             setOptionVisibility(menu, R.id.action_notify, true);
 
-            getSupportActionBar().setTitle("Edit Item");
+            getSupportActionBar().setTitle("");
         }
     }
 
@@ -377,7 +375,30 @@ public class ChecklistItemEditorActivity extends AppCompatActivity {
 
                 notifyTime = calendar.getTimeInMillis();
             }
+
+            getSupportActionBar().setTitle(getAlarmText(notifyTime));
+
+            setOptionVisibility(menu, R.id.action_notify_off, true);
+            setOptionVisibility(menu, R.id.action_notify, false);
         }
+    }
+
+    private String getAlarmText(long notifyTime) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+
+        c.add(Calendar.DATE, 1);
+
+        String alarmText = (new SimpleDateFormat("h:mm a").format(notifyTime));
+
+        if (notifyTime > c.getTimeInMillis()) {
+            alarmText = "Tomorrow " + alarmText;
+        }
+
+        return alarmText;
     }
 
 }

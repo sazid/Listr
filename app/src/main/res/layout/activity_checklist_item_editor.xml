@@ -29,6 +29,7 @@
     tools:context="com.mohammedsazid.android.listr.ChecklistItemEditorActivity">
 
     <android.support.v7.widget.Toolbar
+        android:gravity="center_vertical"
         android:id="@+id/top_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,7 +41,7 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/top_toolbar"
@@ -63,6 +64,6 @@
             android:padding="16dp"
             android:singleLine="false" />
 
-    </RelativeLayout>
+    </ScrollView>
 
 </RelativeLayout>
